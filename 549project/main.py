@@ -4,6 +4,7 @@ import sys
 import subprocess
 from weather import *
 from date import *
+from audio import *
 
 user = ""
 
