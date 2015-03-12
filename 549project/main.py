@@ -9,16 +9,17 @@ from audio import *
 user = ""
 
 while (True):
-	keyword = ""
+	keyword = []
 	# Check for the keyword dude
-	while (keyword != "dude"):
+	while ("dude" not in keyword):
 		print "No input..."
 		subprocess.call("./speech2text_short.sh")
 		f1 = open("stt.txt", "rw+")
-		keyword = f1.read().strip('\n');
+		noise = f1.read().strip('\n')
 		f1.close()
-		if (keyword != ""):
-			print "Just heard %s" % (keyword)
+		if (noise != ""):
+			print "Just heard %s" % (noise)
+                keyword = noise.split()
 
 	subprocess.call(["./text2speech.sh", 
 		"%s what can I do for you" % (user)])
@@ -26,7 +27,7 @@ while (True):
 	# Listen to user's question
 	subprocess.call("./speech2text_long.sh")
 	f2 = open("stt.txt", "rw+")
-	line = f2.read().strip('\n');
+	line = f2.read().strip('\n')
 	f2.close()
 	if (line != ""):
 		print "Your question is %s" % (line)
@@ -35,7 +36,7 @@ while (True):
 		continue
 	
 	# Process request
-	request = line.split();
+	request = line.split()
 	
 	response = "%s I do not know what to say" % (user)
 	
