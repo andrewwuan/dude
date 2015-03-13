@@ -14,9 +14,6 @@ def insert_audio(name, audio):
     global database
     database.append((name, new_addr))
 
-
-insert_audio("hello", "dude.flac")
-
 def correlate(audio1, audio2):
     # TODO find out whether audio1 highly correlates with audio2
     return True
