@@ -36,7 +36,7 @@ def correlate(audio1, audio2):
     lags, c, line, b = plt.xcorr(sig1Norm, sig2Norm)
 
     maxC = amax(c)
-    print("max correlation is %d" % maxC)
+    print("max correlation is %f" % maxC)
     return (maxC > 0.5)
 
 def match(elem):
