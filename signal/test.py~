@@ -8,8 +8,8 @@ a = [1,2,3]
 b = [4, 5, 6]
 print sig
 print sig2
-corr = signal.correlate(sig, sig2, mode = 'valid')
-lags, c, line, b = plt.xcorr(sig, sig2)
+#corr = signal.correlate(sig, sig2, mode = 'valid')
+lags, c, line, b = plt.xcorr(a, a)
 print corr
 print c
 print line
