@@ -27,7 +27,7 @@ def correlate(audio1, audio2):
     sig1Norm = pcm2float(sig1, 'float32')
     sig2Norm = pcm2float(sig2, 'float32')
 
-    lags, c, line, b = plt.xcorr(sigNorm, sig2Norm)
+    lags, c, line, b = plt.xcorr(sig1Norm, sig2Norm)
     return (amax(line) > 0.5)
 
 def match(elem):
