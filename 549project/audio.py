@@ -9,10 +9,13 @@ def insert_audio(name, audio):
     # [audio] is the address of sound file by user [name]
     # 1. change [audio] to a new address to avoid overwrite
     new_addr = "%s.flac" % (name)
-    subprocess.call("mv %s %s" % (audio, new_addr))
+    subprocess.call(["mv", audio, new_addr])
     # 2. store data to database
     global database
     database.append((name, new_addr))
+
+
+insert_audio("hello", "dude.flac")
 
 def correlate(audio1, audio2):
     # TODO find out whether audio1 highly correlates with audio2
