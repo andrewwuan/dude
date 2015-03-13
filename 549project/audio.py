@@ -1,5 +1,10 @@
 #!/usr/bin/python
 
+from scipy.io import wavfile
+from scipy import signal
+import matplotlib.pyplot as plt
+from utility import pcm2float
+from numpy import *
 import subprocess
 
 database = []
@@ -8,7 +13,7 @@ target = ""
 def insert_audio(name, audio):
     # [audio] is the address of sound file by user [name]
     # 1. change [audio] to a new address to avoid overwrite
-    new_addr = "%s.flac" % (name)
+    new_addr = "%s.wav" % (name)
     subprocess.call(["mv", audio, new_addr])
     # 2. store data to database
     global database
@@ -16,7 +21,14 @@ def insert_audio(name, audio):
 
 def correlate(audio1, audio2):
     # TODO find out whether audio1 highly correlates with audio2
-    return True
+    fs1, sig1 = wavfile.read(audio1)
+    fs2, sig2 = wavfile.read(audio2)
+    
+    sig1Norm = pcm2float(sig1, 'float32')
+    sig2Norm = pcm2float(sig2, 'float32')
+
+    lags, c, line, b = plt.xcorr(sigNorm, sig2Norm)
+    return (amax(line) > 0.5)
 
 def match(elem):
     name = elem[0]
