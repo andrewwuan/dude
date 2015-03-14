@@ -5,6 +5,7 @@ import subprocess
 from weather import *
 from date import *
 #from audio import *
+from wiki import *
 
 user = ""
 
@@ -59,6 +60,11 @@ while (True):
     if ("time" in request or
         "date" in request):
         response = "%s %s" % (user, check_date(request))
+    
+    # Check Wiki
+    if ("what" == request[0] and
+        "is" == request[1]):
+        response = "%s %s" % (user, check_wiki(request))
     	
     subprocess.call(["./text2speech.sh", response])
 
