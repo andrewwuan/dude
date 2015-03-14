@@ -33,7 +33,7 @@ def correlate(audio1, audio2):
     sig1Norm = pcm2float(sig1Short, 'float32')
     sig2Norm = pcm2float(sig2Short, 'float32')
 
-    lags, c, line, b = plt.xcorr(sig1Norm, sig2Norm)
+    lags, c, line, b = plt.xcorr(sig1Norm, sig2Norm, maxlags=None)
 
     maxC = amax(c)
     print("max correlation is %f" % maxC)
