@@ -7,6 +7,7 @@ from weather import *
 from date import *
 #from audio import *
 from wiki import *
+from client import *
 
 user = ""
 
@@ -67,6 +68,12 @@ while (True):
         "is" == request[1]):
         response = "%s, %s" % (user, check_wiki(request))
     
+    ############# TODO ###############
+    # Connect to server
+    if (False):
+        response = "%s, %s" % (user, check_server(request))
+    ############# END  ###############
+     
     # cannot handle too long strings
     if (len(response) > 100):
         response = response[0:101]
