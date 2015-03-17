@@ -69,7 +69,7 @@ while (True):
         response = "%s, %s" % (user, check_wiki(request))
     
     ############# TODO ###############
-    # Connect to server
+    # If the request needs information from server
     if (False):
         response = "%s, %s" % (user, check_server(request))
     ############# END  ###############
