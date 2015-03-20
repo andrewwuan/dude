@@ -6,10 +6,11 @@ import matplotlib.pyplot as plt
 from utility import pcm2float
 from numpy import *
 import subprocess
+import operator
 
 database = []
 target = ""
-
+dictionary = {}
 def insert_audio(name, audio):
     # [audio] is the address of sound file by user [name]
     # 1. change [audio] to a new address to avoid overwrite
@@ -39,18 +40,22 @@ def correlate(audio1, audio2):
     lag, c, line, b = plt.xcorr(absolute(sig1fft),absolute(sig2fft))
     maxC = amax(c)
     print("max correlation is %f" % maxC)
-    return (maxC > 0.66)
+    return maxC
+    #return (maxC > 0.66)
 
 def match(elem):
     name = elem[0]
     addr = elem[1]
-    
+    global dictionary
+    dictionary[name] = correlate(target, addr)
+    return
     # if the audio matches, return name of the user
+"""
     if (correlate(target, addr)):
         return name
     else:
         return ""
-
+"""
 def find(elem):
     # filter out the empty strings
     return (elem != "")
@@ -62,6 +67,15 @@ def check_audio(audio):
     
     global target 
     target = audio
+    map(match, database)
+    global dictionary
+    print dictionary
+    result = max(dictionary.iteritems(), key = operator.itemgetter(1))
+    if (result[1]>0.65):
+        return result[0]
+    else:
+        return ""
+"""
     matches = map(match, database)
     result = filter(find, matches)
     if (result == []):
@@ -72,4 +86,5 @@ def check_audio(audio):
         # return the first name matched
         # there should be only one name theoretically
         return result[0]
+"""
 
