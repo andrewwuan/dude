@@ -15,5 +15,5 @@ done
 sox dude.wav -t flac -c 1 -r 16000 dude.flac
 #wget -q -U "Mozilla/5.0" --post-file dude.flac --header "Content-Type: audio/x-flac; rate=16000" -O - "http://www.google.com/speech-api/v2/recognize?lang=en-us&client=chromium&key=AIzaSyCNtR-Gkh4uhob8J1oxy6MtpyNn_FNs7vg" | cut -d\" -f8 > stt.txt
 #wget -q -U "Mozilla/5.0" --post-file dude.flac --header "Content-Type: audio/x-flac; rate=16000" -O - "http://www.google.com/speech-api/v2/recognize?lang=en-us&client=chromium&key=AIzaSyBhDRjJDmZ23ZvYPni8--O3dxUauAZKYvs" | cut -d\" -f8 > stt.txt
-#wget -q -U "Mozilla/5.0" --post-file dude.flac --header "Content-Type: audio/x-flac; rate=16000" -O - "http://www.google.com/speech-api/v2/recognize?lang=en-us&client=chromium&key=AIzaSyAY7G3fRXOVODejFit7isph3OOvY-bmJPI" | cut -d\" -f8 > stt.txt
-wget -q -U "Mozilla/5.0" --post-file dude.flac --header "Content-Type: audio/x-flac; rate=16000" -O - "http://www.google.com/speech-api/v2/recognize?lang=en-us&client=chromium&key=AIzaSyCCJMVMpF-prxcR9_vCoyhbVUsNjAqMw4w" | cut -d\" -f8 > stt.txt
+wget -q -U "Mozilla/5.0" --post-file dude.flac --header "Content-Type: audio/x-flac; rate=16000" -O - "http://www.google.com/speech-api/v2/recognize?lang=en-us&client=chromium&key=AIzaSyAY7G3fRXOVODejFit7isph3OOvY-bmJPI" | cut -d\" -f8 > stt.txt
+#wget -q -U "Mozilla/5.0" --post-file dude.flac --header "Content-Type: audio/x-flac; rate=16000" -O - "http://www.google.com/speech-api/v2/recognize?lang=en-us&client=chromium&key=AIzaSyCCJMVMpF-prxcR9_vCoyhbVUsNjAqMw4w" | cut -d\" -f8 > stt.txt
