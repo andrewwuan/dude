@@ -16,7 +16,7 @@ while (True):
     # Check for the keyword dude
     while ("dude" not in keyword):
         print "No input..."
-        subprocess.call("./speech2text_short.sh")
+        subprocess.call("./speech2text.sh")
         f1 = open("stt.txt", "rw+")
         noise = f1.read().strip('\n')
         f1.close()
@@ -30,7 +30,7 @@ while (True):
         "%s, what can I do for you" % (user)])
 
     # Listen to user's question
-    subprocess.call("./speech2text_long.sh")
+    subprocess.call("./speech2text.sh")
     f2 = open("stt.txt", "rw+")
     line = f2.read().strip('\n')
     f2.close()
