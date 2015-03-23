@@ -50,7 +50,7 @@ while (True):
         "name" == request[1] and
         "is" == request[2]):
         user = request[3]
-        #insert_audio(user, "dude.wav")
+        insert_audio(user, "dude.wav")
         response = "hello, %s" % (user)
 
     # Check weather
