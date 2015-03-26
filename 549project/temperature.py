@@ -11,4 +11,3 @@ def check_temperature(request):
     response = "temperature in the current room is {0:0.3F} degree celcius".format(temp)
     return response
 
-print check_temperature("")
