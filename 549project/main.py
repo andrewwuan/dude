@@ -8,6 +8,7 @@ from date import *
 from audio import *
 from wiki import *
 from client import *
+from temperature import *
 
 user = ""
 
@@ -52,10 +53,13 @@ while (True):
         user = request[3]
         insert_audio(user, "dude.wav")
         response = "hello, %s" % (user)
+    
+    # Check temperature
+    if ("temperature" in request):
+        response = "%s, %s" % (user, check_temperature(request))
 
     # Check weather
-    if ("weather" in request or
-        "temperature" in request):
+    if ("weather" in request):
         response = "%s, %s" % (user, check_weather(request))
 
     # Check time
