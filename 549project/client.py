@@ -20,15 +20,19 @@ def synchronous_update(url, user, name, value):
     return response.body
 
 def synchronous_upload(url, filename):
+    f = open(filename, 'rb')
     files = {'file': open(filename, 'rb'), }
-    response = requests.post(url, files=files)
-    return response.text
+    #response = requests.post(url, files=files)
+    http_client = HTTPClient()
+    response = http_client.fetch(url, body=f.read(), method='POST')
+    return response.body
 
-synchronous_upload("http://localhost:8888", 'hello.txt')
+#synchronous_upload("http://localhost:8888", 'camera-shutter-click-01.wav')
+synchronous_upload("http://localhost:8888", 'song.wav')
 
-synchronous_update("http://localhost:8888", "Amy", "hobby", "reading")
+#synchronous_update("http://localhost:8888", "Amy", "hobby", "reading")
 
-print synchronous_fetch("http://localhost:8888", "Amy", "hobby")
+#print synchronous_fetch("http://localhost:8888", "Amy", "hobby")
 
 # returns response text
 def check_server(request):

@@ -54,7 +54,8 @@ class MainHandler(tornado.web.RequestHandler):
 				"WHERE user = %s", name, value, user) 
 
 	def post(self):
-		print "haha"
+		f = open("wavfile.wav", "wb")
+		f.write(self.request.body)
 
 
 def main():
