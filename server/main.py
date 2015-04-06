@@ -5,6 +5,7 @@
 # 1. build a port to listen for connection
 # 2. no matter what request client sends over, server sends back "hello world"
 
+import os
 import tornado.httpserver
 import tornado.ioloop
 import tornado.options
@@ -12,6 +13,8 @@ import tornado.web
 import torndb
 import MySQLdb
 import unicodedata
+
+from audio import *
 
 from tornado.options import define, options
 
@@ -25,6 +28,7 @@ class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
             (r"/", MainHandler),
+            (r"/wav", WavHandler),
         ]
         tornado.web.Application.__init__(self, handlers)
 
@@ -56,6 +60,44 @@ class MainHandler(tornado.web.RequestHandler):
     def post(self):
         f = open("wavfile.wav", "wb")
         f.write(self.request.body)
+
+
+# Speaker recognition class
+class WavHandler(tornado.web.RequestHandler):
+    # Do speaker recognition
+    def get(self):
+        temp_file = "temp.wav"
+
+        # Write data to a temporary file
+        f = open(temp_file, "wb")
+        f.write(self.request.body)
+        f.close()
+
+        # Do speaker recognition
+        users = self.application.db.query("SELECT name,speech_file FROM users")
+        print(users)
+
+        self.write(check_audio(temp_file, users))
+
+        os.remove(temp_file)
+
+    # Post new user speech profile
+    def post(self):
+        user = self.get_argument("user")
+        speech_file = "%s.wav" % user
+        self.write("You want to post new speech data to user " + user)
+
+        # Write to file
+        f = open(speech_file, "wb")
+        f.write(self.request.body)
+        f.close()
+
+        # Add user to database
+        entry = self.application.db.get("SELECT * FROM users WHERE name=%s", user)
+        if not entry:
+            self.application.db.execute("INSERT INTO users VALUES(%s, %s)",
+                user, speech_file)
+
 
 
 def main():
