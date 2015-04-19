@@ -3,6 +3,7 @@
 import sys
 import string
 import subprocess
+import optparse
 from weather import *
 from date import *
 from wiki import *
@@ -10,6 +11,18 @@ from client import *
 from temperature import *
 
 user = ""
+
+parser = optparse.OptionParser()
+
+parser.add_option('-h', '--host',
+    action="store", dest="host",
+    help="host name", default="localhost")
+
+parser.add_option('-p', '--port',
+    action="store", dest="port",
+    help="port number", default="8888")
+
+options, args = parser.parse_args()
 
 while (True):
     keyword = []
@@ -24,7 +37,7 @@ while (True):
             print "Just heard %s" % (noise)
             keyword = noise.split()
         
-    user = get_recognition('dude.wav', '', '')
+    user = get_recognition('dude.wav', options.host, options.port)
 
     subprocess.call(["./text2speech.sh", 
         "%s, what can I do for you" % (user)])
@@ -50,7 +63,7 @@ while (True):
         "name" == request[1] and
         "is" == request[2]):
         user = request[3]
-        post_recognition(user, 'dude.wav', '', '')
+        post_recognition(user, 'dude.wav', options.host, options.port)
         response = "hello, %s" % (user)
     
     # Check temperature
@@ -73,8 +86,8 @@ while (True):
     
     ############# TODO ###############
     # If the request needs information from server
-    if (False):
-        response = "%s, %s" % (user, check_server(request))
+    #if (False):
+    #    response = "%s, %s" % (user, check_server(request))
     ############# END  ###############
      
     # cannot handle too long strings
