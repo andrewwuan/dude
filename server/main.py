@@ -78,7 +78,10 @@ class WavHandler(tornado.web.RequestHandler):
         users = self.application.db.query("SELECT name,speech_file FROM users")
         print(users)
 
-        self.write(check_audio(temp_file, users))
+        if (len(users) == 0):
+            self.write('')
+        else:
+            self.write(check_audio(temp_file, users))
 
         os.remove(temp_file)
 
