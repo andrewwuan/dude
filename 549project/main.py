@@ -3,21 +3,33 @@
 import sys
 import string
 import subprocess
+import optparse
 from weather import *
 from date import *
-from audio import *
 from wiki import *
 from client import *
-from temperature import *
+#from temperature import *
 
 user = ""
+
+parser = optparse.OptionParser()
+
+parser.add_option('-q', '--query',
+    action="store", dest="host",
+    help="host name", default="localhost")
+
+parser.add_option('-p', '--port',
+    action="store", dest="port",
+    help="port number", default="8888")
+
+options, args = parser.parse_args()
 
 while (True):
     keyword = []
     # Check for the keyword dude
     while ("dude" not in keyword):
         print "No input..."
-        subprocess.call("./speech2text.sh")
+        subprocess.call("./speech2text_short.sh")
         f1 = open("stt.txt", "rw+")
         noise = f1.read().strip('\n')
         f1.close()
@@ -25,13 +37,13 @@ while (True):
             print "Just heard %s" % (noise)
             keyword = noise.split()
         
-    user = check_audio("dude.wav")
+    user = get_recognition('dude.wav', options.host, options.port)
 
     subprocess.call(["./text2speech.sh", 
         "%s, what can I do for you" % (user)])
 
     # Listen to user's question
-    subprocess.call("./speech2text.sh")
+    subprocess.call("./speech2text_long.sh")
     f2 = open("stt.txt", "rw+")
     line = f2.read().strip('\n')
     f2.close()
@@ -51,12 +63,12 @@ while (True):
         "name" == request[1] and
         "is" == request[2]):
         user = request[3]
-        insert_audio(user, "dude.wav")
+        post_recognition(user, 'dude.wav', options.host, options.port)
         response = "hello, %s" % (user)
     
     # Check temperature
-    if ("temperature" in request):
-        response = "%s, %s" % (user, check_temperature(request))
+    #if ("temperature" in request):
+    #    response = "%s, %s" % (user, check_temperature(request))
 
     # Check weather
     if ("weather" in request):
@@ -74,8 +86,8 @@ while (True):
     
     ############# TODO ###############
     # If the request needs information from server
-    if (False):
-        response = "%s, %s" % (user, check_server(request))
+    #if (False):
+    #    response = "%s, %s" % (user, check_server(request))
     ############# END  ###############
      
     # cannot handle too long strings
