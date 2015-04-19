@@ -8,13 +8,13 @@ from weather import *
 from date import *
 from wiki import *
 from client import *
-from temperature import *
+#from temperature import *
 
 user = ""
 
 parser = optparse.OptionParser()
 
-parser.add_option('-h', '--host',
+parser.add_option('-q', '--query',
     action="store", dest="host",
     help="host name", default="localhost")
 
@@ -29,7 +29,7 @@ while (True):
     # Check for the keyword dude
     while ("dude" not in keyword):
         print "No input..."
-        subprocess.call("./speech2text.sh")
+        subprocess.call("./speech2text_short.sh")
         f1 = open("stt.txt", "rw+")
         noise = f1.read().strip('\n')
         f1.close()
@@ -43,7 +43,7 @@ while (True):
         "%s, what can I do for you" % (user)])
 
     # Listen to user's question
-    subprocess.call("./speech2text.sh")
+    subprocess.call("./speech2text_long.sh")
     f2 = open("stt.txt", "rw+")
     line = f2.read().strip('\n')
     f2.close()
@@ -67,8 +67,8 @@ while (True):
         response = "hello, %s" % (user)
     
     # Check temperature
-    if ("temperature" in request):
-        response = "%s, %s" % (user, check_temperature(request))
+    #if ("temperature" in request):
+    #    response = "%s, %s" % (user, check_temperature(request))
 
     # Check weather
     if ("weather" in request):
