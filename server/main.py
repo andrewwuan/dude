@@ -62,6 +62,7 @@ class MainHandler(tornado.web.RequestHandler):
         f.write(self.request.body)
 
 
+
 # Speaker recognition class
 class WavHandler(tornado.web.RequestHandler):
     # Do speaker recognition
@@ -99,8 +100,30 @@ class WavHandler(tornado.web.RequestHandler):
                 user, speech_file)
 
 
+prompt = """Usage:
+GET /wav:   
+    request:
+        parameters: (none)
+        body: wav file
+    response:
+        voice recognized user name
+POST /wav:
+    request:
+        parameters: user
+        body: wav file
+    response:
+        acknowledgement
+
+Using curl:
+(Replace arguments enclosed by <>)
+Run voice recognition:
+    curl -X GET http://<hostname>:8888/wav --data-binary @<audio>.wav
+Post new user voice data:
+    curl -X POST http://<hostname>:8888/wav?user=<name> --data-binary @<audio>.wav
+"""
 
 def main():
+    print prompt
     tornado.options.parse_command_line()
     http_server = tornado.httpserver.HTTPServer(Application())
     http_server.listen(options.port)
