@@ -59,16 +59,27 @@ def normalize(X, low, high, dtype=None):
 
 def read_from_camera():
     capture = CaptureFromCAM(0)  # 0 -> index of camera
+    face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
     if capture:     # Camera initialized without any errors
         NamedWindow("cam-test",CV_WINDOW_AUTOSIZE)
-    f = QueryFrame(capture)     # capture the frame
-    arr = np.asarray(f[:,:], dtype=np.uint8)
-    arr = arr[:,120:520]
-    im = cv2.resize(arr, (92, 112))
-    im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
-    if f:
-        ShowImage("cam-test",fromarray(im))
-    return im
+    while True:
+        f = QueryFrame(capture)     # capture the frame
+        arr = np.asarray(f[:,:], dtype=np.uint8)
+        gray = cv2.cvtColor(arr, cv2.COLOR_BGR2GRAY)
+        faces = face_cascade.detectMultiScale(
+            gray,
+            scaleFactor=1.1,
+            minNeighbors=5,
+            minSize=(30, 30),
+            flags = cv2.cv.CV_HAAR_SCALE_IMAGE
+        )
+        if len(faces) != 0:
+            (x,y,w,h) = faces[0]
+            d = w * 112 / 184
+            im = gray[(y-0.5*d):(y+1.5 * d), x:(x+w)]
+            im = cv2.resize(im, (92, 112))
+            ShowImage("cam-test",fromarray(im))
+            return im
 
 def read_images(path, sz=None):
     """Reads the images in a given folder, resizes images on the fly if size is given.
