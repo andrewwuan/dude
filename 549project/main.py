@@ -5,7 +5,6 @@ import string
 import subprocess
 from weather import *
 from date import *
-from audio import *
 from wiki import *
 from client import *
 from temperature import *
@@ -25,7 +24,7 @@ while (True):
             print "Just heard %s" % (noise)
             keyword = noise.split()
         
-    user = check_audio("dude.wav")
+    user = get_recognition('dude.wav', '', '')
 
     subprocess.call(["./text2speech.sh", 
         "%s, what can I do for you" % (user)])
@@ -51,7 +50,7 @@ while (True):
         "name" == request[1] and
         "is" == request[2]):
         user = request[3]
-        insert_audio(user, "dude.wav")
+        post_recognition(user, 'dude.wav', '', '')
         response = "hello, %s" % (user)
     
     # Check temperature
