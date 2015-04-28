@@ -24,6 +24,7 @@ while (True):
         if (noise != ""):
             print "Just heard %s" % (noise)
             keyword = noise.split()
+        # Add pulling information
         
     user = check_audio("dude.wav")
 
@@ -67,11 +68,15 @@ while (True):
         "date" in request):
         response = "%s, %s" % (user, check_date(request))
     
+    # Set alarm
+    if ("alarm" in request):
+        response = "%s, %s" % (user, alarm(request))
+
     # Check Wiki
     if ("what" == request[0] and
         "is" == request[1]):
         response = "%s, %s" % (user, check_wiki(request))
-    
+
     ############# TODO ###############
     # If the request needs information from server
     if (False):
