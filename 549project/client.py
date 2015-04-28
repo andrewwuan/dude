@@ -1,4 +1,6 @@
+"""
 #!/usr/bin/python
+
 import tornado.ioloop
 import tornado.concurrent
 from tornado.httpclient import HTTPClient
@@ -42,4 +44,23 @@ def check_server(request):
 def update_server(request):
     response = synchronous_update(request)
     return response
+"""
 
+import subprocess
+
+def post_recognition(name, audio, host, port):
+    print("Posting user %s's audio file %s" % (name, audio))
+    if (not host):
+        host = 'localhost'
+    if (not port):
+        port = '8888'
+    output = subprocess.check_output(['curl', '-X', 'POST', 'http://%s:%s/wav?user=%s' % (host, port, name), '--data-binary', "@%s" % audio])
+   
+def get_recognition(audio, host, port):
+    print("Getting voice recognition result with audio file %s" % audio)
+    if (not host):
+        host = 'localhost'
+    if (not port):
+        port = '8888'
+    output = subprocess.check_output(['curl', '-X', 'GET', 'http://%s:%s/wav' % (host, port), '--data-binary', "@%s" % audio])
+    return output
