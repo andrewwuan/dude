@@ -24,11 +24,17 @@ define("mysql_database", default="dude", help="dude database name")
 define("mysql_user", default="dude", help="dude database user")
 define("mysql_password", default="dude", help="dude database password")
 
+# Map for messages
+# In form of:
+# dest_user -> [{user: <Original User Name>, message: <Message>}, ...]
+messages_map = {}
+
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
             (r"/", MainHandler),
             (r"/wav", WavHandler),
+            (r"/message", MessageHandler),
         ]
         tornado.web.Application.__init__(self, handlers)
 
@@ -102,11 +108,34 @@ class WavHandler(tornado.web.RequestHandler):
             self.application.db.execute("INSERT INTO users VALUES(%s, %s)",
                 user, speech_file)
 
+# Message class
+class MessageHandler(tornado.web.RequestHandler):
+    # Get message for user
+    def get(self):
+        dest_user = self.get_argument("orig_user")
+        messages = messages_map[dest_user]
+        if (messages != None):
+            self.write(messages)
+            messages_map[dest_user] = None
+        else:
+            self.write("No new messages")
+
+    # Post message to user
+    def post(self):
+        orig_user = self.get_argument("orig_user")
+        dest_user = self.get_argument("dest_user")
+        message = self.request.body
+        messages = messages_map[dest_user]
+        if (messages != None):
+            messages.append({'user': orig_user, 'message': message})
+            messages_map[dest_user] = messages
+        else:
+            messages_map[dest_user] = [{'user': orig_user, 'message': message}]
+        self.write("Message sent")
 
 prompt = """Usage:
 GET /wav:   
     request:
-        parameters: (none)
         body: wav file
     response:
         voice recognized user name
@@ -116,6 +145,18 @@ POST /wav:
         body: wav file
     response:
         acknowledgement
+GET /message:
+    request:
+        parameters: orig_user
+    response:
+        A list of messages for orig_user in {user:<Name>, message:<Message>} format, 
+            or "No new messages" if there're no messages.
+POST /message:
+    request:
+        parameters: orig_user, dest_user
+        body: message
+    response:
+        "Message send"
 
 Using curl:
 (Replace arguments enclosed by <>)
