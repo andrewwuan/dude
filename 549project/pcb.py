@@ -9,8 +9,18 @@ import time
 import os
 import RPi.GPIO as GPIO
 
-GPIO.setmode(GPIO.BCM)
 DEBUG = 1
+
+# change these as desired - they're the pins connected from the
+# SPI port on the ADC to the Cobbler
+SPICLK = 18
+SPIMISO = 23
+SPIMOSI = 24
+SPICS = 25
+
+# temperature sensor connected to adc #0, photocell connected to adc #1
+temperature_adc = 0
+brightness_adc = 1
 
 # read SPI data from MCP3008 chip, 8 possible adc's (0 thru 7)
 def readadc(adcnum, clockpin, mosipin, misopin, cspin):
@@ -47,69 +57,35 @@ def readadc(adcnum, clockpin, mosipin, misopin, cspin):
         adcout >>= 1       # first bit is 'null' so drop it
         return adcout
 
-# change these as desired - they're the pins connected from the
-# SPI port on the ADC to the Cobbler
-SPICLK = 18
-SPIMISO = 23
-SPIMOSI = 24
-SPICS = 25
 
 # set up the SPI interface pins
-GPIO.setup(SPIMOSI, GPIO.OUT)
-GPIO.setup(SPIMISO, GPIO.IN)
-GPIO.setup(SPICLK, GPIO.OUT)
-GPIO.setup(SPICS, GPIO.OUT)
+def setupPCB():
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(SPIMOSI, GPIO.OUT)
+    GPIO.setup(SPIMISO, GPIO.IN)
+    GPIO.setup(SPICLK, GPIO.OUT)
+    GPIO.setup(SPICS, GPIO.OUT)
 
-# temperature sensor connected to adc #0, photocell connected to adc #1
-temperature_adc = 0
-brightness_adc = 1
 
-# setting last value & tolerance
-# if change is less than tolerance, don't report changed
-temperature_last = 0
-temperature_tolerance = 0
+setupPCB()
 
-brightness_last = 0
-brightness_tolerance = 0
-
+def readTemperature():
+    temperature_value = readadc(temperature_adc, SPICLK, SPIMOSI,SPIMISO, SPICS)
+    set_temperature = temperature_value - 180 # TODO: get rid of magic number
+    set_temperature = round(set_temperature)
+    set_temperature = int(set_temperature)
+    return set_temperature
+    
+def readBrightness():
+    brightness_value = readadc(brightness_adc, SPICLK, SPIMOSI,SPIMISO, SPICS)
+    set_brightness = brightness_value / 10.24 # Convert 10 bit value to percent
+    set_brightness = round(set_brightness)
+    set_brightness = int(set_brightness)
+    return set_brightness
 
 while True:
 
-    # Temperature
-    temperature_changed = False
+    print 'Temperature = {temperature}%' .format(temperature = readTemperature())
+    print 'Brightness = {brightness}%' .format(brightness = readBrightness())
 
-    temperature_value = readadc(temperature_adc, SPICLK, SPIMOSI,SPIMISO, SPICS)
-    temperature_adjust = abs(temperature_value - temperature_last)
-
-    if ( temperature_adjust > temperature_tolerance ):
-        temperature_changed = True
-
-    if ( temperature_changed ):
-        set_temperature = temperature_value / 10.24     # convert 10bit adc0 (0-1024) to percent
-        set_temperature = round(set_temperature)
-        set_temperature = int(set_temperature)
-
-        print 'Temperature = {temperature}%' .format(temperature = set_temperature)
-
-        temperature_last = temperature_value
-
-
-    # Brightness
-    brightness_changed = False
-
-    brightness_value = readadc(brightness_adc, SPICLK, SPIMOSI,SPIMISO, SPICS)
-    brightness_adjust = abs(brightness_value - brightness_last)
-
-    if ( brightness_adjust > brightness_tolerance ):
-        brightness_changed = True
-
-    if ( brightness_changed ):
-        set_brightness = brightness_value / 10.24     # convert 10bit adc0 (0-1024) to percent
-        set_brightness = round(set_brightness)
-        set_brightness = int(set_brightness)
-
-        print 'Brightness = {brightness}%' .format(brightness = set_brightness)
-
-        brightness_last = brightness_value
-
-    time.sleep(0.5)
+    time.sleep(1)

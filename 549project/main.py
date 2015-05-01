@@ -8,6 +8,7 @@ from weather import *
 from date import *
 from wiki import *
 from client import *
+from message import *
 #from temperature import *
 
 user = ""
@@ -31,6 +32,12 @@ while (True):
     keyword = []
     # Check for the keyword dude
     while ("dude" not in keyword):
+        # Check for incoming message
+        packet = check_message(user)
+        if (packet[0] != ""):            
+            message = "%s, you have a message from %s." % (user, packet[0])
+            subprocess.call(["./text2speech.sh", message])
+            subprocess.call(["./text2speech.sh", packet[1]])
         print "No input..."
         subprocess.call("./speech2text_short.sh")
         f1 = open("stt.txt", "rw+")
@@ -73,6 +80,22 @@ while (True):
     # Check temperature
     #if ("temperature" in request):
     #    response = "%s, %s" % (user, check_temperature(request))
+
+    # Leave message
+    if ("message" in request):
+        user2 = request[-1]
+        response = "Okay, %s" % (user)
+        subprocess.call(["./text2speech.sh", response])
+        subprocess.call("./speech2text_long.sh")
+        f3 = open("stt.txt", "rw+")
+        message = f3.read().strip('\n')
+        f3.close()
+        if (message != ""):
+            print "Your message for %s is %s" % (user2, message)
+            send_message(message, user, user2)
+            response = "Your message for %s is sent, %s" % (user2, user)
+        else:
+            response = "I did not hear your message, %s" % (user)
 
     # Check weather
     if ("weather" in request):
