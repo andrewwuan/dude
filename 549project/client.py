@@ -6,6 +6,7 @@ from tornado.httpclient import HTTPClient
 from tornado.httputil import url_concat
 import requests
 import string
+import urllib
 #from alarm import *
 
 def synchronous_fetch(url, user, name):
@@ -74,7 +75,8 @@ def post_recognition(name, audio, host, port):
         host = 'localhost'
     if (not port):
         port = '8888'
-    output = subprocess.check_output(['curl', '-X', 'POST', 'http://%s:%s/wav?user=%s' % (host, port, user), '--data-binary', "@%s" % audio])
+    output = subprocess.check_output(['curl', '-X', 'POST', 'http://%s:%s/wav?%s' % 
+        (host, port, urllib.urlencode({'user': user})), '--data-binary', "@%s" % audio])
    
 def get_recognition(audio, host, port):
     print("Getting voice recognition result with audio file %s" % audio)
@@ -92,8 +94,8 @@ def check_message(user, host, port):
         host = 'localhost'
     if (not port):
         port = '8888'
-    output = subprocess.check_output(['curl', '-X', 'GET', 'http://%s:%s/message?orig_user=%s' 
-        % (host, port, user)])
+    output = subprocess.check_output(['curl', '-X', 'GET', 'http://%s:%s/message?%s' 
+        % (host, port, urllib.urlencode({'orig_user': user}))])
     return eval(output)['messages']
 
 def send_message(message, orig_user, dest_user, host, port):
@@ -107,6 +109,6 @@ def send_message(message, orig_user, dest_user, host, port):
         host = 'localhost'
     if (not port):
         port = '8888'
-    output = subprocess.check_output(['curl', '-X', 'POST', 'http://%s:%s/message?orig_user=%s&dest_user=%s' 
-        % (host, port, orig_user, dest_user), '--data', "%s" % message])
+    output = subprocess.check_output(['curl', '-X', 'POST', 'http://%s:%s/message?%s' 
+        % (host, port, urllib.urlencode({'orig_user': orig_user, 'dest_user': dest_user})), '--data', "%s" % message])
     return output

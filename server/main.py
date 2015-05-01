@@ -184,6 +184,10 @@ Run voice recognition:
     curl -X GET http://<hostname>:8888/wav --data-binary @<audio>.wav
 Post new user voice data:
     curl -X POST http://<hostname>:8888/wav?user=<name> --data-binary @<audio>.wav
+Check message:
+    curl -X GET http://<hostname>:8888/message?orig_user=<name>
+Send message:
+    curl -X POST http://<hostname>:8888/message?orig_user=<name>&dest_user=<name> --data <message>
 """
 
 def main():
