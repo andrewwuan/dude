@@ -133,7 +133,7 @@ class MessageHandler(tornado.web.RequestHandler):
     # Get message for user
     def get(self):
         dest_user = self.get_argument("orig_user")
-        messages = messages_map[dest_user]
+        messages = messages_map.get(dest_user)
         if (messages != None):
             self.write(messages)
             messages_map[dest_user] = None
@@ -145,7 +145,7 @@ class MessageHandler(tornado.web.RequestHandler):
         orig_user = self.get_argument("orig_user")
         dest_user = self.get_argument("dest_user")
         message = self.request.body
-        messages = messages_map[dest_user]
+        messages = messages_map.get(dest_user)
         if (messages != None):
             messages.append({'user': orig_user, 'message': message})
             messages_map[dest_user] = messages

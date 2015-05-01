@@ -85,28 +85,28 @@ def get_recognition(audio, host, port):
     output = subprocess.check_output(['curl', '-X', 'GET', 'http://%s:%s/wav' % (host, port), '--data-binary', "@%s" % audio])
     return output
 
-def check_message(user):
-        # Check server and fetch message for user
-        print("Check user %s's messages" % user)
-        if (not host):
-            host = 'localhost'
-        if (not port):
-            port = '8888'
-        output = subprocess.check_output(['curl', '-X', 'GET', 'http://%s:%s/message?orig_user=%s' 
-            % (host, port, orig_user)])
-        return output
+def check_message(user, host, port):
+    # Check server and fetch message for user
+    print("Check user %s's messages" % user)
+    if (not host):
+        host = 'localhost'
+    if (not port):
+        port = '8888'
+    output = subprocess.check_output(['curl', '-X', 'GET', 'http://%s:%s/message?orig_user=%s' 
+        % (host, port, user)])
+    return output
 
-def send_message(message, orig_user, dest_user):
-        # Convert I to user name
-        message = message.replace("i ", "%s " % (orig_user))
-        message = message.replace("I ", "%s " % (orig_user))
+def send_message(message, orig_user, dest_user, host, port):
+    # Convert I to user name
+    message = message.replace("i ", "%s " % (orig_user))
+    message = message.replace("I ", "%s " % (orig_user))
 
-        # Send the message to server (orig_user -> dest_user)
-        print("Post message to user %s from user %s" % (dest_user, orig_user)
-        if (not host):
-            host = 'localhost'
-        if (not port):
-            port = '8888'
-        output = subprocess.check_output(['curl', '-X', 'POST', 'http://%s:%s/message?orig_user=%s?dest_user=%s' 
-            % (host, port, orig_user, dest_user), '--data', "%s" message])
-        return output
+    # Send the message to server (orig_user -> dest_user)
+    print("Post message to user %s from user %s" % (dest_user, orig_user))
+    if (not host):
+        host = 'localhost'
+    if (not port):
+        port = '8888'
+    output = subprocess.check_output(['curl', '-X', 'POST', 'http://%s:%s/message?orig_user=%s?dest_user=%s' 
+        % (host, port, orig_user, dest_user), '--data', "%s" % message])
+    return output

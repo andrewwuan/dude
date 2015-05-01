@@ -36,7 +36,7 @@ while (True):
     # Check for the keyword dude
     while ("dude" not in keyword):
         # Check for incoming message
-        packet = check_message(user)
+        packet = check_message(user, options.host, options.port)
         if (packet[0] != ""):            
             message = "%s, you have a message from %s." % (user, packet[0])
             subprocess.call(["./text2speech.sh", message])
@@ -99,7 +99,7 @@ while (True):
         f3.close()
         if (message != ""):
             print "Your message for %s is %s" % (user2, message)
-            send_message(message, user, user2)
+            send_message(message, user, user2, options.host, options.port)
             response = "Your message for %s is sent, %s" % (user2, user)
         else:
             response = "I did not hear your message, %s" % (user)
