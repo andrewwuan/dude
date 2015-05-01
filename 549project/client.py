@@ -94,7 +94,7 @@ def check_message(user, host, port):
         port = '8888'
     output = subprocess.check_output(['curl', '-X', 'GET', 'http://%s:%s/message?orig_user=%s' 
         % (host, port, user)])
-    return output
+    return eval(output)['messages']
 
 def send_message(message, orig_user, dest_user, host, port):
     # Convert I to user name
@@ -107,6 +107,6 @@ def send_message(message, orig_user, dest_user, host, port):
         host = 'localhost'
     if (not port):
         port = '8888'
-    output = subprocess.check_output(['curl', '-X', 'POST', 'http://%s:%s/message?orig_user=%s?dest_user=%s' 
+    output = subprocess.check_output(['curl', '-X', 'POST', 'http://%s:%s/message?orig_user=%s&dest_user=%s' 
         % (host, port, orig_user, dest_user), '--data', "%s" % message])
     return output

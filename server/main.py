@@ -135,10 +135,10 @@ class MessageHandler(tornado.web.RequestHandler):
         dest_user = self.get_argument("orig_user")
         messages = messages_map.get(dest_user)
         if (messages != None):
-            self.write(messages)
+            self.write({'messages': messages})
             messages_map[dest_user] = None
         else:
-            self.write([])
+            self.write({'messages': []})
 
     # Post message to user
     def post(self):
