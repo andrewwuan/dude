@@ -39,15 +39,21 @@ class Application(tornado.web.Application):
 
 
 class MainHandler(tornado.web.RequestHandler):
+    alarms = ""
+    delim = "$"
+
     def get(self):
-        user = self.get_argument("user")
-        name = self.get_argument("name")
-        value = self.get_argument("value", None)
-        if (not value):
+        method = self.get_argument("method")
+        if (method == "fetch"):
+            user = self.get_argument("user")
+            name = self.get_argument("name")
             entry = self.application.db.get("SELECT * FROM entries WHERE user = %s AND name = %s",
-                user, name)
+            user, name)
             self.write(entry.value)
-        else:
+        elif (method == "update"):
+            user = self.get_argument("user")
+            name = self.get_argument("name")
+            value = self.get_argument("value")
             entry = self.application.db.get("SELECT * FROM entries WHERE user = %s", user)
             if not entry:
                 self.application.db.execute(
@@ -55,7 +61,21 @@ class MainHandler(tornado.web.RequestHandler):
             else:
                 self.application.db.execute(
                 "UPDATE entries SET name = %s, value = %s"
-                "WHERE user = %s", name, value, user) 
+                "WHERE user = %s", name, value, user)
+        elif (method == "update_alarm"):
+            request = self.get_argument("request")
+            self.alarms = self.alarms + request
+            self.alarms = self.alarms + self.delim
+        elif (method == "check_alarms"):
+            print self.alarms
+            self.alarms = self.alarms[0:-1]
+            print self.alarms
+            self.write(self.alarms)
+            self.alarms = ""
+            return self.alarms
+        else:
+            print "Error, method is %s", method
+
 
     def post(self):
         f = open("wavfile.wav", "wb")

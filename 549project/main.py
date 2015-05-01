@@ -24,6 +24,9 @@ parser.add_option('-p', '--port',
 
 options, args = parser.parse_args()
 
+# set receive alarm
+signal.signal(signal.SIGALRM, receive_alarm)
+
 while (True):
     keyword = []
     # Check for the keyword dude
@@ -101,6 +104,6 @@ while (True):
         last_space = string.rfind(response, " ") 
         response = response[0:last_space]
     
-    print response    	
+    print response        
     subprocess.call(["./text2speech.sh", response])
 
