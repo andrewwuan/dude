@@ -8,7 +8,6 @@ from weather import *
 from date import *
 from wiki import *
 from client import *
-from message import *
 #from temperature import *
 
 user = ""

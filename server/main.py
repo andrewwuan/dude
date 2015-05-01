@@ -138,7 +138,7 @@ class MessageHandler(tornado.web.RequestHandler):
             self.write(messages)
             messages_map[dest_user] = None
         else:
-            self.write("No new messages")
+            self.write([])
 
     # Post message to user
     def post(self):

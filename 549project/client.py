@@ -5,6 +5,7 @@ import tornado.concurrent
 from tornado.httpclient import HTTPClient
 from tornado.httputil import url_concat
 import requests
+import string
 #from alarm import *
 
 def synchronous_fetch(url, user, name):
@@ -73,7 +74,7 @@ def post_recognition(name, audio, host, port):
         host = 'localhost'
     if (not port):
         port = '8888'
-    output = subprocess.check_output(['curl', '-X', 'POST', 'http://%s:%s/wav?user=%s' % (host, port, name), '--data-binary', "@%s" % audio])
+    output = subprocess.check_output(['curl', '-X', 'POST', 'http://%s:%s/wav?user=%s' % (host, port, user), '--data-binary', "@%s" % audio])
    
 def get_recognition(audio, host, port):
     print("Getting voice recognition result with audio file %s" % audio)
@@ -83,3 +84,29 @@ def get_recognition(audio, host, port):
         port = '8888'
     output = subprocess.check_output(['curl', '-X', 'GET', 'http://%s:%s/wav' % (host, port), '--data-binary', "@%s" % audio])
     return output
+
+def check_message(user):
+        # Check server and fetch message for user
+        print("Check user %s's messages" % user)
+        if (not host):
+            host = 'localhost'
+        if (not port):
+            port = '8888'
+        output = subprocess.check_output(['curl', '-X', 'GET', 'http://%s:%s/message?orig_user=%s' 
+            % (host, port, orig_user)])
+        return output
+
+def send_message(message, orig_user, dest_user):
+        # Convert I to user name
+        message = message.replace("i ", "%s " % (orig_user))
+        message = message.replace("I ", "%s " % (orig_user))
+
+        # Send the message to server (orig_user -> dest_user)
+        print("Post message to user %s from user %s" % (dest_user, orig_user)
+        if (not host):
+            host = 'localhost'
+        if (not port):
+            port = '8888'
+        output = subprocess.check_output(['curl', '-X', 'POST', 'http://%s:%s/message?orig_user=%s?dest_user=%s' 
+            % (host, port, orig_user, dest_user), '--data', "%s" message])
+        return output
