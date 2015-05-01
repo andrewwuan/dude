@@ -8,13 +8,14 @@ from weather import *
 from date import *
 from wiki import *
 from client import *
+from pcb import *
 #from temperature import *
 
 user = ""
 
 parser = optparse.OptionParser()
 
-parser.add_option('-q', '--query',
+parser.add_option('-u', '--url',
     action="store", dest="host",
     help="host name", default="localhost")
 
@@ -26,6 +27,9 @@ options, args = parser.parse_args()
 
 # set receive alarm
 signal.signal(signal.SIGALRM, receive_alarm)
+
+# setup the pcb
+setupPCB()
 
 while (True):
     keyword = []
@@ -77,8 +81,12 @@ while (True):
         response = "hello, %s" % (user)
     
     # Check temperature
-    #if ("temperature" in request):
-    #    response = "%s, %s" % (user, check_temperature(request))
+    if ("temperature" in request):
+       response = "%s, the current temperature is %s" % (user, readTemperature())
+
+    # Check brightness
+    if ("brightness" in request):
+       response = "%s, the current brightness is %s" % (user, readBrightness())
 
     # Leave message
     if ("message" in request):

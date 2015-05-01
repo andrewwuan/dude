@@ -66,9 +66,6 @@ def setupPCB():
     GPIO.setup(SPICLK, GPIO.OUT)
     GPIO.setup(SPICS, GPIO.OUT)
 
-
-setupPCB()
-
 def readTemperature():
     temperature_value = readadc(temperature_adc, SPICLK, SPIMOSI,SPIMISO, SPICS)
     set_temperature = temperature_value - 180 # TODO: get rid of magic number
@@ -83,9 +80,9 @@ def readBrightness():
     set_brightness = int(set_brightness)
     return set_brightness
 
-while True:
+# while True:
 
-    print 'Temperature = {temperature}%' .format(temperature = readTemperature())
-    print 'Brightness = {brightness}%' .format(brightness = readBrightness())
+#     print 'Temperature = {temperature}%' .format(temperature = readTemperature())
+#     print 'Brightness = {brightness}%' .format(brightness = readBrightness())
 
-    time.sleep(1)
+#     time.sleep(1)
