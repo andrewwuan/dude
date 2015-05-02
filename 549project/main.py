@@ -218,7 +218,7 @@ while (True):
 
     # Bad language
     for r in request:
-        if ("*" in r):
+        if ("*" in r or "bitch" in r):
             response = "You cursed! You no-manor stupid piece of poo-poo %s" % user
             break
 
