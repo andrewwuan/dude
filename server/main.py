@@ -48,9 +48,8 @@ class Application(tornado.web.Application):
 
 
 class MainHandler(tornado.web.RequestHandler):
-    alarms = ""
-    delim = "$"
-
+    alarm = {}
+    
     def get(self):
         method = self.get_argument("method")
         if (method == "fetch"):
@@ -73,15 +72,18 @@ class MainHandler(tornado.web.RequestHandler):
                 "WHERE user = %s", name, value, user)
         elif (method == "update_alarm"):
             request = self.get_argument("request")
-            self.alarms = self.alarms + request
-            self.alarms = self.alarms + self.delim
+            device = self.get_argument("device")
+            self.alarm[device] = request
+            print self.alarm[device]
         elif (method == "check_alarms"):
-            print self.alarms
-            self.alarms = self.alarms[0:-1]
-            print self.alarms
-            self.write(self.alarms)
-            self.alarms = ""
-            return self.alarms
+            device = self.get_argument("device")
+            for d in self.alarm.keys():
+                if (d != device):
+                    request = self.alarm[d]
+                    self.write(request)
+                    #return request
+                else:
+                    self.write("No alarm")
         else:
             print "Error, method is %s", method
 
@@ -89,7 +91,6 @@ class MainHandler(tornado.web.RequestHandler):
     def post(self):
         f = open("wavfile.wav", "wb")
         f.write(self.request.body)
-
 
 
 # Speaker recognition class
