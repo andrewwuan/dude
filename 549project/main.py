@@ -35,7 +35,7 @@ signal.signal(signal.SIGALRM, receive_alarm)
 setupPCB()
 
 # setup facial recognition
-setup()
+trainData()
 
 while (True):
     keyword = []
@@ -91,6 +91,7 @@ while (True):
         user = request[3]
         post_recognition(user, 'dude.wav', options.device, options.host, options.port)
         take_photo(user)
+        trainData()
         response = "hello, %s" % (user)
     
     # Check temperature
