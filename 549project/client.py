@@ -48,17 +48,6 @@ def update_alarms(url, request, device):
     response = http_client.fetch(url)
     return response.body
 
-#synchronous_upload("http://localhost:8888", 'camera-shutter-click-01.wav')
-#synchronous_upload("http://localhost:8888", 'song.wav')
-
-#synchronous_update("http://localhost:8888", "Amy", "hobby", "reading")
-
-#print synchronous_fetch("http://localhost:8888", "Amy", "hobby")
-
-
-#update_alarms("http://localhost:8888", "Set alarm at 2:38 p.m.", "device0")
-#check_alarms("http://localhost:8888", "device1")
-
 # returns response text
 def check_server(request):
     response = synchronous_fetch(request)

@@ -10,7 +10,7 @@ def receive_alarm(signum, stack):
     t += datetime.timedelta(minutes=1)
     t = t.replace(second=0, microsecond=0)
     if (alarms[t]):
-        subprocess.call(['afplay', 'alarm.mp3'])
+        subprocess.call(['afplay', '-t', '15', 'alarm.mp3'])
     else:
         print "Alarm canceled"
 
