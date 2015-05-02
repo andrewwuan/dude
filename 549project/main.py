@@ -55,9 +55,9 @@ while (True):
         if (user != ''):
             packet = check_message(user, options.host, options.port)
             if (len(packet) != 0):
-                message = "%s, you have a message from %s." % (user, packet[0])
+                message = "%s, you have a message from %s." % (user, packet[0]['user'])
                 subprocess.call(["./text2speech.sh", message])
-                subprocess.call(["./text2speech.sh", packet[1]])
+                subprocess.call(["./text2speech.sh", packet[0]['message']])
 
         # Post temperature & brightness data
         set_temperature(options.device, readTemperature(), options.host, options.port)
@@ -203,6 +203,19 @@ while (True):
         "do" == request[1] and
         "I" == request[2]):
         response = "%s, %s" % (user, check_wiki(request, 3))
+
+    # Check the user of the other device
+    if ("who" == request[0] and
+        "is" == request[1] and
+        "at" == request[2] and
+        "home" == request[3]):
+        last_users = get_last_user(options.host, options.port)
+        response = "%s, I don't know who's at the other side" % user
+        for last_user in last_users:
+            if (last_user['name'] != options.device):
+                response = "%s, %s is" % (user, last_user['last_user'])
+                break
+
 
     ############# TODO ###############
     # If the request needs information from server
