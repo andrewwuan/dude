@@ -115,11 +115,3 @@ def dateFromDayOfWeek(dayOfW, next, ):
         gapDate = 7 - dayOfWeek_now + d
     date = datetime.datetime.now() + datetime.timedelta(days=gapDate)
     return date
-
-def main():
-    signal.signal(signal.SIGALRM, receive_alarm)
-    alarm('Set alarm at 11:55 a.m.')
-    #cancel_alarm('Cancel alarm at 11:00 a.m.')
-    while(1):
-        a = 1
-main()
