@@ -44,7 +44,8 @@ signal.signal(signal.SIGALRM, receive_alarm)
 setupPCB()
 
 # setup facial recognition
-trainData()
+if (options.camera):
+    trainData()
 
 while (True):
     keyword = []
