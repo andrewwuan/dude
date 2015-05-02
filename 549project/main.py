@@ -54,10 +54,10 @@ while (True):
         # Check for incoming message
         if (user != ''):
             packet = check_message(user, options.host, options.port)
-            if (len(packet) != 0):
-                message = "%s, you have a message from %s." % (user, packet[0]['user'])
+            for p in packet:
+                message = "%s, you have a message from %s." % (user, p['user'])
                 subprocess.call(["./text2speech.sh", message])
-                subprocess.call(["./text2speech.sh", packet[0]['message']])
+                subprocess.call(["./text2speech.sh", p['message']])
 
         # Post temperature & brightness data
         set_temperature(options.device, readTemperature(), options.host, options.port)
@@ -216,6 +216,11 @@ while (True):
                 response = "%s, %s is" % (user, last_user['last_user'])
                 break
 
+    # Bad language
+    for r in request:
+        if ("*" in r):
+            response = "You cursed! You no-manor stupid piece of poo-poo %s" % user
+            break
 
     ############# TODO ###############
     # If the request needs information from server
