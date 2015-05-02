@@ -70,15 +70,27 @@ while (True):
 
     if (user == ""):
         subprocess.call(["./text2speech.sh", 
-            "hi, what's your name?"])       
-        subprocess.call("./speech2text_short.sh")
+            "hi, I'm dude. Who are you?"])
+        subprocess.call("./speech2text_long.sh")
         f5 = open("stt.txt", "rw+")
-        name = f5.read().strip('\n')
+
+        # Get splitted words
+        line = f5.read().strip('\n')
+        request = line.split()
         f5.close()
-        if (name == ""):
+
+        # Find "name" in the sentence
+        nameStart = 0
+        for i in xrange(len(request)):
+            if request[i] == 'name':
+                nameStart = i + 2
+
+        if (nameStart == 0):
             subprocess.call(["./text2speech.sh", 
                 "fine, don't tell me. i dont want to know it anyway."])            
             continue
+
+        name = ' '.join(request[i:])
         post_recognition(name, 'dude.wav', options.device, options.host, options.port)
         subprocess.call(["./text2speech.sh", "hello, %s" % (name)])
         continue
@@ -177,7 +189,11 @@ while (True):
     # Check Wiki
     if ("what" == request[0] and
         "is" == request[1]):
-        response = "%s, %s" % (user, check_wiki(request))
+        response = "%s, %s" % (user, check_wiki(request, 2))
+    if ("how" == request[0] and
+        "do" == request[1] and
+        "I" == request[2]):
+        response = "%s, %s" % (user, check_wiki(request, 3))
 
     ############# TODO ###############
     # If the request needs information from server
