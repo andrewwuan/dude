@@ -35,6 +35,9 @@ signal.signal(signal.SIGALRM, receive_alarm)
 # setup the pcb
 setupPCB()
 
+# setup facial recognition
+setup()
+
 while (True):
     keyword = []
     # Check for the keyword dude
@@ -87,6 +90,7 @@ while (True):
         "is" == request[2]):
         user = request[3]
         post_recognition(user, 'dude.wav', options.device, options.host, options.port)
+        take_photo(user)
         response = "hello, %s" % (user)
     
     # Check temperature
@@ -132,6 +136,14 @@ while (True):
     # Check weather
     if ("weather" in request):
         response = "%s, %s" % (user, check_weather(request))
+
+    # Recognize person
+    if ("recognize" in request):
+        name, confidence = recognize()
+        if (confidence < 6000):
+            response = "%s, I don't know this guy" % user
+        else:
+            response = "%s, this is %s" % (user, name)
 
     # Check time
     if ("time" in request or
