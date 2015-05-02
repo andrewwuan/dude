@@ -1,1 +1,16 @@
-sox FAIL formats: can't open input file `dude.wav': No such file or directory
+Samples read:                 0
+Length (seconds):      0.000000
+Scaled by:         2147483647.0
+Maximum amplitude:     0.000000
+Minimum amplitude:     0.000000
+Midline amplitude:     0.000000
+Mean    norm:               nan
+Mean    amplitude:          nan
+RMS     amplitude:          nan
+Maximum delta:         0.000000
+Minimum delta:         0.000000
+Mean    delta:        -0.000000
+RMS     delta:        -0.000000
+Rough   frequency:            0
+
+Probably text, not sound

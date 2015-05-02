@@ -44,8 +44,8 @@ from cv2.cv import *
 import picamera
 import numpy as np
 
-model
-names
+model = None
+names = None
 
 def normalize(X, low, high, dtype=None):
     """Normalizes a given array in X to a value between low and high."""
@@ -132,6 +132,7 @@ def train_data():
     # so we use np.asarray to turn them into NumPy lists to make
     # the OpenCV wrapper happy:
     global model
+    model = cv2.createEigenFaceRecognizer()
     model.train(np.asarray(X), np.asarray(y))
 
 

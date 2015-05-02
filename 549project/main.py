@@ -28,7 +28,7 @@ parser.add_option('-d', '--device',
     help="device name", default="Teddy")
 
 parser.add_option("-c", "--camera",
-    action="store_false", dest="camera",
+    action="store_true", dest="camera",
     help="enable camera", default=False)
 
 options, args = parser.parse_args()
@@ -45,7 +45,7 @@ setupPCB()
 
 # setup facial recognition
 if (options.camera):
-    trainData()
+    train_data()
 
 while (True):
     keyword = []
@@ -128,8 +128,8 @@ while (True):
         user = request[3]
         post_recognition(user, 'dude.wav', options.device, options.host, options.port)
         if (options.camera):
-            take_photo(user)
-            trainData()
+            takePhoto(user)
+            train_data()
         response = "hello, %s" % (user)
     
     # Check temperature
@@ -146,7 +146,7 @@ while (True):
 
     # Check brightness
     if ("brightness" in request):
-        brightnesses = get_brightness()
+        brightnesses = get_brightness(options.host, options.port)
         success = 0
         for b in brightnesses:
             if (b['name'] == options.device):
