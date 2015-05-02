@@ -68,7 +68,7 @@ def setupPCB():
 
 def readTemperature():
     temperature_value = readadc(temperature_adc, SPICLK, SPIMOSI,SPIMISO, SPICS)
-    set_temperature = temperature_value - 180 # TODO: get rid of magic number
+    set_temperature = 22 + (temperature_value - 240) * 0.5 # TODO: get rid of magic number
     set_temperature = round(set_temperature)
     set_temperature = int(set_temperature)
     return set_temperature
