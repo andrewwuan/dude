@@ -100,8 +100,7 @@ while (True):
 
         name = ' '.join(request[i:])
         post_recognition(name, 'dude.wav', options.device, options.host, options.port)
-        subprocess.call(["./text2speech.sh", "hello, %s" % (name)])
-        continue
+        user = name
 
     subprocess.call(["./text2speech.sh", 
         "hi, %s" % (user)])
