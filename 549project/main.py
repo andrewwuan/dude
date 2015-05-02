@@ -72,7 +72,7 @@ while (True):
             print "Just heard %s" % (noise)
             keyword = noise.split()
         # Check for alarms
-        check_alarms(options.url, options.device)
+        check_alarms(options.host, options.device)
         
     user = get_recognition('dude.wav', options.device, options.host, options.port)
 
