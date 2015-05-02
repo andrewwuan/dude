@@ -27,7 +27,16 @@ parser.add_option('-d', '--device',
     action="store", dest="device",
     help="device name", default="Teddy")
 
+parser.add_option("-c", "--camera",
+    action="store_false", dest="camera",
+    help="enable camera", default=False)
+
 options, args = parser.parse_args()
+
+# import camera
+if (options.camera):
+    from facial_recognition import *
+    from takeSample import *
 
 # set receive alarm
 signal.signal(signal.SIGALRM, receive_alarm)
@@ -35,18 +44,20 @@ signal.signal(signal.SIGALRM, receive_alarm)
 setupPCB()
 
 # setup facial recognition
-trainData()
+if (options.camera):
+    trainData()
 
 while (True):
     keyword = []
     # Check for the keyword dude
     while ("dude" not in keyword):
         # Check for incoming message
-        packet = check_message(user, options.host, options.port)
-        if (len(packet) != 0):            
-            message = "%s, you have a message from %s." % (user, packet[0])
-            subprocess.call(["./text2speech.sh", message])
-            subprocess.call(["./text2speech.sh", packet[1]])
+        if (user != ''):
+            packet = check_message(user, options.host, options.port)
+            if (len(packet) != 0):
+                message = "%s, you have a message from %s." % (user, packet[0])
+                subprocess.call(["./text2speech.sh", message])
+                subprocess.call(["./text2speech.sh", packet[1]])
 
         # Post temperature & brightness data
         set_temperature(options.device, readTemperature(), options.host, options.port)
@@ -61,24 +72,35 @@ while (True):
             print "Just heard %s" % (noise)
             keyword = noise.split()
         # Check for alarms
-        check_alarms(options.url, options.device)
+        check_alarms("http://" + options.host + ":" + options.port, options.device)
         
     user = get_recognition('dude.wav', options.device, options.host, options.port)
 
     if (user == ""):
         subprocess.call(["./text2speech.sh", 
-            "hi, what's your name?"])       
-        subprocess.call("./speech2text_short.sh")
+            "hi, I'm dude. Who are you?"])
+        subprocess.call("./speech2text_long.sh")
         f5 = open("stt.txt", "rw+")
-        name = f5.read().strip('\n')
+
+        # Get splitted words
+        line = f5.read().strip('\n')
+        request = line.split()
         f5.close()
-        if (name == ""):
+
+        # Find "name" in the sentence
+        nameStart = 0
+        for i in xrange(len(request)):
+            if request[i] == 'name':
+                nameStart = i + 2
+
+        if (nameStart == 0):
             subprocess.call(["./text2speech.sh", 
                 "fine, don't tell me. i dont want to know it anyway."])            
             continue
+
+        name = ' '.join(request[i:])
         post_recognition(name, 'dude.wav', options.device, options.host, options.port)
-        subprocess.call(["./text2speech.sh", "hello, %s" % (name)])
-        continue
+        user = name
 
     subprocess.call(["./text2speech.sh", 
         "hi, %s" % (user)])
@@ -105,8 +127,9 @@ while (True):
         "is" == request[2]):
         user = request[3]
         post_recognition(user, 'dude.wav', options.device, options.host, options.port)
-        take_photo(user)
-        trainData()
+        if (options.camera):
+            take_photo(user)
+            trainData()
         response = "hello, %s" % (user)
     
     # Check temperature
@@ -154,12 +177,13 @@ while (True):
         response = "%s, %s" % (user, check_weather(request))
 
     # Recognize person
-    if ("recognize" in request):
-        name, confidence = facial_recognition()
-        if (confidence < 6000):
-            response = "%s, I don't know this guy" % user
-        else:
-            response = "%s, this is %s" % (user, name)
+    if (options.camera):
+        if ("recognize" in request):
+            name, confidence = facial_recognition()
+            if (confidence < 6000):
+                response = "%s, I don't know this guy" % user
+            else:
+                response = "%s, this is %s" % (user, name)
 
     # Check time
     if ("time" in request or
@@ -169,12 +193,16 @@ while (True):
     # Set alarm
     if ("alarm" in request):
         response = "%s, %s" % (user, alarm(request))
-        update_alarms(options.url, request, options.device)
+        update_alarms("http://" + options.host + ":" + options.port, request, options.device)
 
     # Check Wiki
     if ("what" == request[0] and
         "is" == request[1]):
-        response = "%s, %s" % (user, check_wiki(request))
+        response = "%s, %s" % (user, check_wiki(request, 2))
+    if ("how" == request[0] and
+        "do" == request[1] and
+        "I" == request[2]):
+        response = "%s, %s" % (user, check_wiki(request, 3))
 
     ############# TODO ###############
     # If the request needs information from server
