@@ -32,14 +32,14 @@ def set_alarm(request):
     signal.alarm(t)
     print 'Alarm set at ', alarm_time
     alarms[alarm_time] = True
-    return "Alarm is set\n"
+    return "Alarm is set"
 
 def cancel_alarm(request):
     alarm_time = extract_time(request)
     if (alarm_time in alarms.keys()):
         alarms[alarm_time] = False
-        return "Alarm is cancelled\n"
-    return "There is no alarm set at this time\n"    
+        return "Alarm is cancelled"
+    return "There is no alarm set at this time"    
 
 def extract_time(request):
     start = request.find('at')+3
