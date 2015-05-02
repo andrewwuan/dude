@@ -140,7 +140,7 @@ while (True):
 
     # Recognize person
     if ("recognize" in request):
-        name, confidence = recognize()
+        name, confidence = facial_recognition()
         if (confidence < 6000):
             response = "%s, I don't know this guy" % user
         else:
