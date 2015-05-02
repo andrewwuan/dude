@@ -26,6 +26,8 @@ def alarm(request):
 def set_alarm(request):
     time_now = datetime.datetime.now()
     alarm_time = extract_time(request)
+    if (alarm_time == "Wrong time format"):
+        return "Sorry I didn't hear the time clearly, say again"
     t = int((alarm_time - time_now).total_seconds())
     if (t < 0):
         return "Alarm time should be in the future"
@@ -36,6 +38,8 @@ def set_alarm(request):
 
 def cancel_alarm(request):
     alarm_time = extract_time(request)
+    if (alarm_time == "Wrong time format"):
+        return "Sorry I didn't hear the time clearly, say again"
     if (alarm_time in alarms.keys()):
         alarms[alarm_time] = False
         return "Alarm is cancelled"
@@ -59,7 +63,10 @@ def extract_time(request):
         else:
             y = str(datetime.datetime.now().year)
         t += ' '+ m + ' ' + d + ' ' + y
-        alarm_time = datetime.datetime.strptime(t, '%I:%M:%S %p %B %d %Y')
+        try:
+            alarm_time = datetime.datetime.strptime(t, '%I:%M:%S %p %B %d %Y')
+        except:
+            return "Wrong time format"
     elif ('for' in request):
         if ('next' in request):
             start = request.find('next')+5
@@ -71,20 +78,29 @@ def extract_time(request):
             end = request.find(' ', start)
             dayOfW = request[start:end]
             d = dateFromDayOfWeek(dayOfW, False)
-        t = datetime.datetime.strptime(t, '%I:%M:%S %p').time()
-        alarm_time = datetime.datetime.combine(d, t)
+        try:
+            t = datetime.datetime.strptime(t, '%I:%M:%S %p').time()
+            alarm_time = datetime.datetime.combine(d, t)
+        except:
+            return "Wrong time format"
     elif ('tomorrow' in request):
         m = str(datetime.datetime.now().month)
         d = str(datetime.datetime.now().day+1)
         y = str(datetime.datetime.now().year)
         t += ' '+ m + ' ' + d + ' ' + y
-        alarm_time = datetime.datetime.strptime(t, '%I:%M:%S %p %m %d %Y')
+        try:
+            alarm_time = datetime.datetime.strptime(t, '%I:%M:%S %p %m %d %Y')
+        except:
+            return "Wrong time format"
     else:
         m = str(datetime.datetime.now().month)
         d = str(datetime.datetime.now().day)
         y = str(datetime.datetime.now().year)
         t += ' '+ m + ' ' + d + ' ' + y
-        alarm_time = datetime.datetime.strptime(t, '%I:%M:%S %p %m %d %Y')
+        try:
+            alarm_time = datetime.datetime.strptime(t, '%I:%M:%S %p %m %d %Y')
+        except:
+            return "Wrong time format"
     return alarm_time
 
 def dateFromDayOfWeek(dayOfW, next, ):
