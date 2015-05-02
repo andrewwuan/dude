@@ -99,8 +99,12 @@ while (True):
             continue
 
         name = ' '.join(request[i:])
-        post_recognition(name, 'dude.wav', options.device, options.host, options.port)
-        user = name
+        post_recognition(name, 'dude.wav', 
+		options.device, options.host, options.port)
+        if (options.camera):
+            takPhoto(user)
+            train_data()
+	user = name
 
     subprocess.call(["./text2speech.sh", 
         "hi, %s" % (user)])
@@ -126,9 +130,10 @@ while (True):
         "name" == request[1] and
         "is" == request[2]):
         user = request[3]
-        post_recognition(user, 'dude.wav', options.device, options.host, options.port)
+        post_recognition(user, 'dude.wav',
+		options.device, options.host, options.port)
         if (options.camera):
-            takePhoto(user)
+            takPhoto(user)
             train_data()
         response = "hello, %s" % (user)
     
