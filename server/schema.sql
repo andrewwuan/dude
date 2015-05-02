@@ -18,11 +18,12 @@ DROP TABLE IF EXISTS users;
 CREATE TABLE users (
 	name VARCHAR(20) PRIMARY KEY,
 	speech_file VARCHAR(64) NOT NULL
-)
+);
 
-DROP TABLE IF EXISTS clients;
+DROP TABLE IF EXISTS devices;
 CREATE TABLE devices (
-	device VARCHAR (100),
-	location VARCHAR(100),
-	user VARCHAR(20)	
+	name VARCHAR(20) PRIMARY KEY,
+	last_user VARCHAR(20) NOT NULL,
+	temperature FLOAT,
+	brightness FLOAT
 );
