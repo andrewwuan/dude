@@ -9,8 +9,6 @@ from date import *
 from wiki import *
 from client import *
 from pcb import *
-from facial_recognition import *
-from takeSample import *
 #from temperature import *
 
 user = ""
@@ -29,7 +27,16 @@ parser.add_option('-d', '--device',
     action="store", dest="device",
     help="device name", default="Teddy")
 
+parser.add_option("-c", "--camera",
+    action="store_false", dest="camera",
+    help="enable camera", default=False)
+
 options, args = parser.parse_args()
+
+# import camera
+if (options.camera):
+    from facial_recognition import *
+    from takeSample import *
 
 # set receive alarm
 signal.signal(signal.SIGALRM, receive_alarm)
@@ -120,8 +127,9 @@ while (True):
         "is" == request[2]):
         user = request[3]
         post_recognition(user, 'dude.wav', options.device, options.host, options.port)
-        take_photo(user)
-        trainData()
+        if (options.camera):
+            take_photo(user)
+            trainData()
         response = "hello, %s" % (user)
     
     # Check temperature
@@ -169,12 +177,13 @@ while (True):
         response = "%s, %s" % (user, check_weather(request))
 
     # Recognize person
-    if ("recognize" in request):
-        name, confidence = facial_recognition()
-        if (confidence < 6000):
-            response = "%s, I don't know this guy" % user
-        else:
-            response = "%s, this is %s" % (user, name)
+    if (options.camera):
+        if ("recognize" in request):
+            name, confidence = facial_recognition()
+            if (confidence < 6000):
+                response = "%s, I don't know this guy" % user
+            else:
+                response = "%s, this is %s" % (user, name)
 
     # Check time
     if ("time" in request or
