@@ -9,6 +9,8 @@ from date import *
 from wiki import *
 from client import *
 from pcb import *
+from facial_recognition import *
+from takeSample import *
 #from temperature import *
 
 user = ""
