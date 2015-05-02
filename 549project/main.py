@@ -216,6 +216,11 @@ while (True):
                 response = "%s, %s is" % (user, last_user['last_user'])
                 break
 
+    # Bad language
+    for r in request:
+        if ("*" in r):
+            response = "You cursed! You no-manor stupid piece of poo-poo %s" % user
+            break
 
     ############# TODO ###############
     # If the request needs information from server
