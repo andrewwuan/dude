@@ -17,9 +17,9 @@ def receive_alarm(signum, stack):
 def alarm(request):
     request = ' '.join(request)
     if ("set" in request or "Set" in request):
-        set_alarm(request)
+        return set_alarm(request) 
     elif ("cancel" in request or "Cancel" in request):
-        cancel_alarm(request)
+        return cancel_alarm(request)
     else:
         pass
 
@@ -36,9 +36,10 @@ def set_alarm(request):
 
 def cancel_alarm(request):
     alarm_time = extract_time(request)
-    print alarm_time
     if (alarm_time in alarms.keys()):
         alarms[alarm_time] = False
+        return "Alarm is cancelled\n"
+    return "There is no alarm set at this time\n"    
 
 def extract_time(request):
     start = request.find('at')+3
