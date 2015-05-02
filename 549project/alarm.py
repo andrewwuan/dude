@@ -1,30 +1,26 @@
 import signal
 import time
 import datetime
-from client import *
+import subprocess
 
 alarms = {}
-url = "http://localhost:8888"
 
 def receive_alarm(signum, stack):
     t = datetime.datetime.now()
     t += datetime.timedelta(minutes=1)
     t = t.replace(second=0, microsecond=0)
     if (alarms[t]):
-        print "Ring"
+        subprocess.call(['afplay', 'alarm.mp3'])
     else:
         print "Alarm canceled"
 
 def alarm(request):
     if ("set" in request or "Set" in request):
         set_alarm(request)
-        update_alarms(url, request)
     elif ("cancel" in request or "Cancel" in request):
         cancel_alarm(request)
-        update_alarms(url, request)
     else:
         pass
-
 
 def set_alarm(request):
     time_now = datetime.datetime.now()
@@ -76,6 +72,12 @@ def extract_time(request):
             d = dateFromDayOfWeek(dayOfW, False)
         t = datetime.datetime.strptime(t, '%I:%M:%S %p').time()
         alarm_time = datetime.datetime.combine(d, t)
+    elif ('tomorrow' in request):
+        m = str(datetime.datetime.now().month)
+        d = str(datetime.datetime.now().day+1)
+        y = str(datetime.datetime.now().year)
+        t += ' '+ m + ' ' + d + ' ' + y
+        alarm_time = datetime.datetime.strptime(t, '%I:%M:%S %p %m %d %Y')
     else:
         m = str(datetime.datetime.now().month)
         d = str(datetime.datetime.now().day)
@@ -116,7 +118,7 @@ def dateFromDayOfWeek(dayOfW, next, ):
 
 def main():
     signal.signal(signal.SIGALRM, receive_alarm)
-    alarm('Set alarm at 2:38 p.m.')
+    alarm('Set alarm at 11:55 a.m.')
     #cancel_alarm('Cancel alarm at 11:00 a.m.')
     while(1):
         a = 1

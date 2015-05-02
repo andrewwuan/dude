@@ -28,6 +28,7 @@ options, args = parser.parse_args()
 # set receive alarm
 signal.signal(signal.SIGALRM, receive_alarm)
 
+
 while (True):
     keyword = []
     # Check for the keyword dude
@@ -46,7 +47,8 @@ while (True):
         if (noise != ""):
             print "Just heard %s" % (noise)
             keyword = noise.split()
-        # Add pulling information
+        # Check for alarms
+        check_alarms(options.url, options.device)
         
     user = get_recognition('dude.wav', options.host, options.port)
 
@@ -109,6 +111,7 @@ while (True):
     # Set alarm
     if ("alarm" in request):
         response = "%s, %s" % (user, alarm(request))
+        update_alarms(options.url, request, options.device)
 
     # Check Wiki
     if ("what" == request[0] and

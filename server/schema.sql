@@ -20,9 +20,9 @@ CREATE TABLE users (
 	speech_file VARCHAR(64) NOT NULL
 )
 
-
---DROP TABLE IF EXISTS clients;
---CREATE TABLE clients (
---	id INT PRIMARY KEY,
---	location VARCHAR(100)	
---)
+DROP TABLE IF EXISTS clients;
+CREATE TABLE devices (
+	device VARCHAR (100),
+	location VARCHAR(100),
+	user VARCHAR(20)	
+);
