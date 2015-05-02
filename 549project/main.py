@@ -62,8 +62,23 @@ while (True):
         
     user = get_recognition('dude.wav', options.device, options.host, options.port)
 
+    if (user == ""):
+        subprocess.call(["./text2speech.sh", 
+            "hi, what's your name?"])       
+        subprocess.call("./speech2text_short.sh")
+        f5 = open("stt.txt", "rw+")
+        name = f5.read().strip('\n')
+        f5.close()
+        if (name == ""):
+            subprocess.call(["./text2speech.sh", 
+                "fine, don't tell me. i dont want to know it anyway."])            
+            continue
+        post_recognition(name, 'dude.wav', options.device, options.host, options.port)
+        subprocess.call(["./text2speech.sh", "hello, %s" % (name)])
+        continue
+
     subprocess.call(["./text2speech.sh", 
-        "%s, what can I do for you" % (user)])
+        "hi, %s" % (user)])
 
     # Listen to user's question
     subprocess.call("./speech2text_long.sh")
