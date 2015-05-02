@@ -5,9 +5,9 @@ import tornado.concurrent
 from tornado.httpclient import HTTPClient
 from tornado.httputil import url_concat
 import requests
+from alarm import *
 import string
 import urllib
-#from alarm import *
 
 def synchronous_fetch(url, user, name):
     http_client = HTTPClient()
@@ -31,31 +31,22 @@ def synchronous_upload(url, filename):
     response = http_client.fetch(url, body=f.read(), method='POST')
     return response.body
 
-def check_alarms(url):
+def check_alarms(url, device):
     http_client = HTTPClient()
-    params = {"method":"check_alarms"}
+    params = {"method":"check_alarms", "device":device}
     url = url_concat(url, params)
     response = http_client.fetch(url)
     print response.body
-    alarms = response.body.split("$")
-    for alarm_request in alarms:
+    alarm_request = response.body
+    if (alarm != "No alarm"):
         alarm(alarm_request)
 
-def update_alarms(url, request):
+def update_alarms(url, request, device):
     http_client = HTTPClient()
-    params = {"method":"update_alarm", "request":"alarm!!!"}
+    params = {"method":"update_alarm", "request":request, "device":device}
     url = url_concat(url, params)
     response = http_client.fetch(url)
     return response.body
-
-#synchronous_upload("http://localhost:8888", 'camera-shutter-click-01.wav')
-#synchronous_upload("http://localhost:8888", 'song.wav')
-
-#synchronous_update("http://localhost:8888", "Amy", "hobby", "reading")
-
-#print synchronous_fetch("http://localhost:8888", "Amy", "hobby")
-
-
 
 # returns response text
 def check_server(request):
@@ -65,7 +56,6 @@ def check_server(request):
 def update_server(request):
     response = synchronous_update(request)
     return response
-
 
 import subprocess
 

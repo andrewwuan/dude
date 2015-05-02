@@ -32,8 +32,10 @@ options, args = parser.parse_args()
 # set receive alarm
 signal.signal(signal.SIGALRM, receive_alarm)
 
-# setup the pcb
 setupPCB()
+
+# setup facial recognition
+trainData()
 
 while (True):
     keyword = []
@@ -58,7 +60,8 @@ while (True):
         if (noise != ""):
             print "Just heard %s" % (noise)
             keyword = noise.split()
-        # Add pulling information
+        # Check for alarms
+        check_alarms(options.url, options.device)
         
     user = get_recognition('dude.wav', options.device, options.host, options.port)
 
@@ -102,6 +105,8 @@ while (True):
         "is" == request[2]):
         user = request[3]
         post_recognition(user, 'dude.wav', options.device, options.host, options.port)
+        take_photo(user)
+        trainData()
         response = "hello, %s" % (user)
     
     # Check temperature
@@ -148,6 +153,14 @@ while (True):
     if ("weather" in request):
         response = "%s, %s" % (user, check_weather(request))
 
+    # Recognize person
+    if ("recognize" in request):
+        name, confidence = recognize()
+        if (confidence < 6000):
+            response = "%s, I don't know this guy" % user
+        else:
+            response = "%s, this is %s" % (user, name)
+
     # Check time
     if ("time" in request or
         "date" in request):
@@ -156,6 +169,7 @@ while (True):
     # Set alarm
     if ("alarm" in request):
         response = "%s, %s" % (user, alarm(request))
+        update_alarms(options.url, request, options.device)
 
     # Check Wiki
     if ("what" == request[0] and

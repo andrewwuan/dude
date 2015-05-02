@@ -27,10 +27,3 @@ CREATE TABLE devices (
 	temperature FLOAT,
 	brightness FLOAT
 );
-
-
--- DROP TABLE IF EXISTS clients;
--- CREATE TABLE clients (
---	id INT PRIMARY KEY,
---	location VARCHAR(100)	
--- )
