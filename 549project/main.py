@@ -35,7 +35,7 @@ signal.signal(signal.SIGALRM, receive_alarm)
 setupPCB()
 
 # setup facial recognition
-setup()
+trainData()
 
 while (True):
     keyword = []
@@ -65,8 +65,23 @@ while (True):
         
     user = get_recognition('dude.wav', options.device, options.host, options.port)
 
+    if (user == ""):
+        subprocess.call(["./text2speech.sh", 
+            "hi, what's your name?"])       
+        subprocess.call("./speech2text_short.sh")
+        f5 = open("stt.txt", "rw+")
+        name = f5.read().strip('\n')
+        f5.close()
+        if (name == ""):
+            subprocess.call(["./text2speech.sh", 
+                "fine, don't tell me. i dont want to know it anyway."])            
+            continue
+        post_recognition(name, 'dude.wav', options.device, options.host, options.port)
+        subprocess.call(["./text2speech.sh", "hello, %s" % (name)])
+        continue
+
     subprocess.call(["./text2speech.sh", 
-        "%s, what can I do for you" % (user)])
+        "hi, %s" % (user)])
 
     # Listen to user's question
     subprocess.call("./speech2text_long.sh")
@@ -91,6 +106,7 @@ while (True):
         user = request[3]
         post_recognition(user, 'dude.wav', options.device, options.host, options.port)
         take_photo(user)
+        trainData()
         response = "hello, %s" % (user)
     
     # Check temperature
@@ -139,7 +155,7 @@ while (True):
 
     # Recognize person
     if ("recognize" in request):
-        name, confidence = recognize()
+        name, confidence = facial_recognition()
         if (confidence < 6000):
             response = "%s, I don't know this guy" % user
         else:
