@@ -72,7 +72,7 @@ while (True):
             print "Just heard %s" % (noise)
             keyword = noise.split()
         # Check for alarms
-        check_alarms(options.host, options.device)
+        check_alarms("http://" + options.host + ":" + options.port, options.device)
         
     user = get_recognition('dude.wav', options.device, options.host, options.port)
 
@@ -194,7 +194,7 @@ while (True):
     # Set alarm
     if ("alarm" in request):
         response = "%s, %s" % (user, alarm(request))
-        update_alarms(options.url, request, options.device)
+        update_alarms("http://" + options.host + ":" + options.port, request, options.device)
 
     # Check Wiki
     if ("what" == request[0] and
