@@ -35,6 +35,9 @@ class Application(tornado.web.Application):
             (r"/", MainHandler),
             (r"/wav", WavHandler),
             (r"/message", MessageHandler),
+            (r"/brightness", BrightnessHandler),
+            (r"/temperature", TemperatureHandler),
+            (r"/last_user", LastUserHandler),
         ]
         tornado.web.Application.__init__(self, handlers)
 
@@ -93,6 +96,7 @@ class MainHandler(tornado.web.RequestHandler):
 class WavHandler(tornado.web.RequestHandler):
     # Do speaker recognition
     def get(self):
+        device = self.get_argument('device')
         temp_file = "temp.wav"
 
         # Write data to a temporary file
@@ -107,13 +111,22 @@ class WavHandler(tornado.web.RequestHandler):
         if (len(users) == 0):
             self.write('')
         else:
-            self.write(check_audio(temp_file, users))
+            user = check_audio(temp_file, users)
+            # Add last_user to database
+            entry = self.application.db.get("SELECT * FROM devices WHERE name=%s", device)
+            if entry:
+                self.application.db.execute("UPDATE devices SET last_user='%s' WHERE name='%s'" % (user, device))
+            else:
+                self.application.db.execute("INSERT INTO devices VALUES('%s', '%s', 0, 0)" %
+                    (device, user))
+            self.write(user)
 
         os.remove(temp_file)
 
     # Post new user speech profile
     def post(self):
         user = self.get_argument("user")
+        device = self.get_argument('device')
         speech_file = "%s.wav" % user
         self.write("You want to post new speech data to user " + user)
 
@@ -127,6 +140,14 @@ class WavHandler(tornado.web.RequestHandler):
         if not entry:
             self.application.db.execute("INSERT INTO users VALUES(%s, %s)",
                 user, speech_file)
+
+        # Add last_user to database
+        entry = self.application.db.get("SELECT * FROM devices WHERE name=%s", device)
+        if entry:
+            self.application.db.execute("UPDATE devices SET last_user='%s' WHERE name='%s'" % (user, device))
+        else:
+            self.application.db.execute("INSERT INTO devices VALUES('%s', '%s', 0, 0)" %
+                (device, user))
 
 # Message class
 class MessageHandler(tornado.web.RequestHandler):
@@ -153,6 +174,64 @@ class MessageHandler(tornado.web.RequestHandler):
             messages_map[dest_user] = [{'user': orig_user, 'message': message}]
         self.write("Message sent")
 
+# Brightness class
+class BrightnessHandler(tornado.web.RequestHandler):
+    # Get all brightnesses
+    def get(self):
+        # Get data from MySQL
+        data = self.application.db.query("SELECT name,brightness FROM devices")
+        print(data)
+
+        self.write({'brightness': data})
+
+    # Post brightness from device
+    def post(self):
+        device = self.get_argument("device")
+        brightness = float(self.request.body)
+
+        # Add brightness to database
+        entry = self.application.db.get("SELECT * FROM devices WHERE name=%s", device)
+        if entry:
+            self.application.db.execute("UPDATE devices SET brightness=%f WHERE name='%s'" % (brightness, device))
+        else:
+            self.application.db.execute("INSERT INTO devices VALUES('%s', '', 0, %f)" %
+                (device, brightness))
+
+# Temperature class
+class TemperatureHandler(tornado.web.RequestHandler):
+    # Get all temperatures
+    def get(self):
+        # Get data from MySQL
+        data = self.application.db.query("SELECT name,temperature FROM devices")
+        print(data)
+
+        self.write({'temperature': data})
+
+    # Post temperature from device
+    def post(self):
+        device = self.get_argument("device")
+        temperature = float(self.request.body)
+
+        # Add temperature to database
+        entry = self.application.db.get("SELECT * FROM devices WHERE name=%s", device)
+        if entry:
+            self.application.db.execute("UPDATE devices SET temperature=%f WHERE name='%s'" % (temperature, device))
+        else:
+            self.application.db.execute("INSERT INTO devices VALUES('%s', '', %f, 0)" %
+                (device, temperature))
+
+        self.write("Temperature set")
+
+# Brightness class
+class LastUserHandler(tornado.web.RequestHandler):
+    # Get all last users
+    def get(self):
+        # Get data from MySQL
+        data = self.application.db.query("SELECT name,last_user FROM devices")
+        print(data)
+
+        self.write({'last_user': data})
+
 prompt = """Usage:
 GET /wav:   
     request:
@@ -177,6 +256,32 @@ POST /message:
         body: message
     response:
         "Message send"
+
+GET /brightness:
+    response:
+        A list of brightnesses for all devices
+
+POST /brightness:
+    request:
+        parameters: device
+        body: brightness
+    response
+        "Brightness set"
+
+GET /temperature:
+    response:
+        A list of temperatures for all devices
+
+POST /temperature:
+    request:
+        parameters: device
+        body: temperature
+    response
+        "Temperature set"
+
+GET /last_user:
+    response:
+        A list of last_user for all devices
 
 Using curl:
 (Replace arguments enclosed by <>)

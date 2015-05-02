@@ -69,22 +69,22 @@ def update_server(request):
 
 import subprocess
 
-def post_recognition(name, audio, host, port):
+def post_recognition(name, audio, device, host, port):
     print("Posting user %s's audio file %s" % (name, audio))
     if (not host):
         host = 'localhost'
     if (not port):
         port = '8888'
     output = subprocess.check_output(['curl', '-X', 'POST', 'http://%s:%s/wav?%s' % 
-        (host, port, urllib.urlencode({'user': user})), '--data-binary', "@%s" % audio])
+        (host, port, urllib.urlencode({'user': name, 'device': device})), '--data-binary', "@%s" % audio])
    
-def get_recognition(audio, host, port):
+def get_recognition(audio, device, host, port):
     print("Getting voice recognition result with audio file %s" % audio)
     if (not host):
         host = 'localhost'
     if (not port):
         port = '8888'
-    output = subprocess.check_output(['curl', '-X', 'GET', 'http://%s:%s/wav' % (host, port), '--data-binary', "@%s" % audio])
+    output = subprocess.check_output(['curl', '-X', 'GET', 'http://%s:%s/wav?%s' % (host, port, urllib.urlencode({'device': device})), '--data-binary', "@%s" % audio])
     return output
 
 def check_message(user, host, port):
@@ -112,3 +112,60 @@ def send_message(message, orig_user, dest_user, host, port):
     output = subprocess.check_output(['curl', '-X', 'POST', 'http://%s:%s/message?%s' 
         % (host, port, urllib.urlencode({'orig_user': orig_user, 'dest_user': dest_user})), '--data', "%s" % message])
     return output
+
+def get_brightness(host, port):
+    print("Getting brightness")
+    if (not host):
+        host = 'localhost'
+    if (not port):
+        port = '8888'
+
+    output = subprocess.check_output(['curl', '-X', 'GET', 'http://%s:%s/brightness' %
+        (host, port)])
+    return eval(output)['brightness']
+
+def set_brightness(device, brightness, host, port):
+    print("Setting device %s's brightness to %f" % (device, brightness))
+    if (not host):
+        host = 'localhost'
+    if (not port):
+        port = '8888'
+
+    output = subprocess.check_output(['curl', '-X', 'POST', 'http://%s:%s/brightness?%s' %
+        (host, port, urllib.urlencode({'device': device})), '--data', "%f" % brightness])
+    return output
+
+def get_temperature(host, port):
+    print("Getting temperature")
+    if (not host):
+        host = 'localhost'
+    if (not port):
+        port = '8888'
+
+    output = subprocess.check_output(['curl', '-X', 'GET', 'http://%s:%s/temperature' %
+        (host, port)])
+    return eval(output)['temperature']
+
+def set_temperature(device, temperature, host, port):
+    print("Setting device %s's temperature to %f" % (device, temperature))
+    if (not host):
+        host = 'localhost'
+    if (not port):
+        port = '8888'
+
+    output = subprocess.check_output(['curl', '-X', 'POST', 'http://%s:%s/temperature?%s' %
+        (host, port, urllib.urlencode({'device': device})), '--data', "%f" % temperature])
+    return output
+
+def get_last_user(host, port):
+    print("Getting last user")
+    if (not host):
+        host = 'localhost'
+    if (not port):
+        port = '8888'
+
+    output = subprocess.check_output(['curl', '-X', 'GET', 'http://%s:%s/last_user' %
+        (host, port)])
+    return eval(output)['last_user']
+
+

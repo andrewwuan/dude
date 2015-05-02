@@ -23,6 +23,10 @@ parser.add_option('-p', '--port',
     action="store", dest="port",
     help="port number", default="8888")
 
+parser.add_option('-d', '--device',
+    action="store", dest="device",
+    help="device name", default="Teddy")
+
 options, args = parser.parse_args()
 
 # set receive alarm
@@ -41,6 +45,11 @@ while (True):
             message = "%s, you have a message from %s." % (user, packet[0])
             subprocess.call(["./text2speech.sh", message])
             subprocess.call(["./text2speech.sh", packet[1]])
+
+        # Post temperature & brightness data
+        set_temperature(options.device, readTemperature(), options.host, options.port)
+        set_brightness(options.device, readBrightness(), options.host, options.port)
+            
         print "No input..."
         subprocess.call("./speech2text_short.sh")
         f1 = open("stt.txt", "rw+")
@@ -51,7 +60,7 @@ while (True):
             keyword = noise.split()
         # Add pulling information
         
-    user = get_recognition('dude.wav', options.host, options.port)
+    user = get_recognition('dude.wav', options.device, options.host, options.port)
 
     subprocess.call(["./text2speech.sh", 
         "%s, what can I do for you" % (user)])
@@ -77,16 +86,32 @@ while (True):
         "name" == request[1] and
         "is" == request[2]):
         user = request[3]
-        post_recognition(user, 'dude.wav', options.host, options.port)
+        post_recognition(user, 'dude.wav', options.device, options.host, options.port)
         response = "hello, %s" % (user)
     
     # Check temperature
     if ("temperature" in request):
-       response = "%s, the current temperature is %s" % (user, readTemperature())
+        temperatures = get_temperature()
+        success = 0
+        for t in temperatures:
+            if (t['name'] == options.device):
+                response = "%s, the current temperature is %f" % (user, t['temperature'])
+            success = 1
+            break
+        if (not success):
+            response = "%s, I cannot get the temperature from server" % user
 
     # Check brightness
     if ("brightness" in request):
-       response = "%s, the current brightness is %s" % (user, readBrightness())
+        brightnesses = get_brightness()
+        success = 0
+        for b in brightnesses:
+            if (b['name'] == options.device):
+                response = "%s, the current brightness is %f" % (user, t['brightness'])
+            success = 1
+            break
+        if (not success):
+            response = "%s, I cannot get the brightness from server" % user
 
     # Leave message
     if ("message" in request):
