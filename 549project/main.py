@@ -46,7 +46,7 @@ options, args = parser.parse_args()
 # import camera
 if (options.camera):
     from facial_recognition import *
-    from takeSample import *
+    #from takeSample import *
 
 # set receive alarm
 signal.signal(signal.SIGALRM, receive_alarm)
