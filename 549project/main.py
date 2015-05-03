@@ -4,7 +4,7 @@ import sys
 import string
 import subprocess
 import optparse
-from weather import *
+#from weather import *
 from date import *
 from wiki import *
 from client import *
@@ -49,8 +49,9 @@ if (options.camera):
 
 while (True):
     keyword = []
-    # Check for the keyword dude
-    while ("teddy" not in keyword):
+    # Check for the keyword teddy
+    while ("teddy" not in keyword and
+	   "Teddy" not in keyword):
         # Check for incoming message
         if (user != ''):
             packet = check_message(user, options.host, options.port)
@@ -74,11 +75,11 @@ while (True):
         # Check for alarms
         check_alarms("http://" + options.host + ":" + options.port, options.device)
         
-    user = get_recognition('dude.wav', options.device, options.host, options.port)
+    user = get_recognition('teddy.wav', options.device, options.host, options.port)
 
     if (user == ""):
         subprocess.call(["./text2speech.sh", 
-            "hi, I'm dude. Who are you?"])
+            "hi, I'm teddy. Who are you?"])
         subprocess.call("./speech2text_long.sh")
         f5 = open("stt.txt", "rw+")
 
@@ -99,10 +100,10 @@ while (True):
             continue
 
         name = ' '.join(request[i:])
-        post_recognition(name, 'dude.wav', 
+        post_recognition(name, 'teddy.wav', 
 		options.device, options.host, options.port)
         if (options.camera):
-            takePhoto(user)
+            takePhoto(name)
             train_data()
 	user = name
 
@@ -130,7 +131,7 @@ while (True):
         "name" == request[1] and
         "is" == request[2]):
         user = request[3]
-        post_recognition(user, 'dude.wav',
+        post_recognition(user, 'teddy.wav',
 		options.device, options.host, options.port)
         if (options.camera):
             takPhoto(user)
@@ -139,7 +140,7 @@ while (True):
     
     # Check temperature
     if ("temperature" in request):
-        temperatures = get_temperature()
+        temperatures = get_temperature(options.host, options.port)
         success = 0
         for t in temperatures:
             if (t['name'] == options.device):
@@ -178,8 +179,8 @@ while (True):
             response = "I did not hear your message, %s" % (user)
 
     # Check weather
-    if ("weather" in request):
-        response = "%s, %s" % (user, check_weather(request))
+    #if ("weather" in request):
+    #    response = "%s, %s" % (user, check_weather(request))
 
     # Recognize person
     if (options.camera):
