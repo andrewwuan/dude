@@ -165,7 +165,7 @@ while (True):
         success = 0
         for b in brightnesses:
             if (b['name'] == options.device):
-                response = "%s, the current brightness is %f" % (user, convert_brightness(b['brightness']))
+                response = "%s, it's %s" % (user, convert_brightness(b['brightness']))
             success = 1
             break
         if (not success):
