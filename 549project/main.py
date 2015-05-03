@@ -11,6 +11,16 @@ from client import *
 from pcb import *
 #from temperature import *
 
+def convert_brightness(brightness):
+    if (brightness > 50):
+        return "pretty bright"
+    else if (brightness > 35):
+        return "bright"
+    else if (brightness > 25):
+        return "a bit dark"
+    else:
+        return "dark"
+
 user = ""
 
 parser = optparse.OptionParser()
@@ -144,7 +154,7 @@ while (True):
         success = 0
         for t in temperatures:
             if (t['name'] == options.device):
-                response = "%s, the current temperature is %f" % (user, t['temperature'])
+                response = "%s, the current temperature is %.2f" % (user, t['temperature'])
             success = 1
             break
         if (not success):
@@ -156,7 +166,7 @@ while (True):
         success = 0
         for b in brightnesses:
             if (b['name'] == options.device):
-                response = "%s, the current brightness is %f" % (user, b['brightness'])
+                response = "%s, it's %s" % (user, convert_brightness(b['brightness']))
             success = 1
             break
         if (not success):
