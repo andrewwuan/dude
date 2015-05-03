@@ -14,9 +14,9 @@ from pcb import *
 def convert_brightness(brightness):
     if (brightness > 50):
         return "pretty bright"
-    else if (brightness > 35):
+    elif (brightness > 35):
         return "bright"
-    else if (brightness > 25):
+    elif (brightness > 25):
         return "a bit dark"
     else:
         return "dark"
