@@ -50,7 +50,7 @@ if (options.camera):
 while (True):
     keyword = []
     # Check for the keyword dude
-    while ("dude" not in keyword):
+    while ("teddy" not in keyword):
         # Check for incoming message
         if (user != ''):
             packet = check_message(user, options.host, options.port)
@@ -102,7 +102,7 @@ while (True):
         post_recognition(name, 'dude.wav', 
 		options.device, options.host, options.port)
         if (options.camera):
-            takPhoto(user)
+            takePhoto(user)
             train_data()
 	user = name
 
@@ -185,7 +185,7 @@ while (True):
     if (options.camera):
         if ("recognize" in request):
             name, confidence = facial_recognition()
-            if (confidence < 6000):
+            if (confidence > 6000):
                 response = "%s, I don't know this guy" % user
             else:
                 response = "%s, this is %s" % (user, name)

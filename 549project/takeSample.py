@@ -3,6 +3,7 @@ import cv2
 import numpy
 import sys
 import picamera
+import os
 from time import sleep
 
 def takePhoto(pathname):
