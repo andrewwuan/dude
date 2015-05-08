@@ -59,9 +59,9 @@ if (options.camera):
 
 while (True):
     keyword = []
-    # Check for the keyword teddy
-    while ("teddy" not in keyword and
-	   "Teddy" not in keyword):
+    # Check for the keyword dude
+    while ("dude" not in keyword and
+	   "Dude" not in keyword):
         # Check for incoming message
         if (user != ''):
             packet = check_message(user, options.host, options.port)
@@ -85,11 +85,11 @@ while (True):
         # Check for alarms
         check_alarms("http://" + options.host + ":" + options.port, options.device)
         
-    user = get_recognition('teddy.wav', options.device, options.host, options.port)
+    user = get_recognition('dude.wav', options.device, options.host, options.port)
 
     if (user == ""):
         subprocess.call(["./text2speech.sh", 
-            "hi, I'm teddy. Who are you?"])
+            "hi, Who are you?"])
         subprocess.call("./speech2text_long.sh")
         f5 = open("stt.txt", "rw+")
 
@@ -101,7 +101,9 @@ while (True):
         # Find "name" in the sentence
         nameStart = 0
         for i in xrange(len(request)):
-            if request[i] == 'name':
+            if (request[i] == 'name' or
+                request[i] == 'i' or
+                request[i] == 'I'):
                 nameStart = i + 2
 
         if (nameStart == 0):
@@ -110,12 +112,15 @@ while (True):
             continue
 
         name = ' '.join(request[i:])
-        post_recognition(name, 'teddy.wav', 
+        post_recognition(name, 'dude.wav', 
 		options.device, options.host, options.port)
         if (options.camera):
             takePhoto(name)
             train_data()
-	user = name
+        subprocess.call(["./text2speech.sh", 
+            "hi, %s" % (name)])
+        user = name
+        continue
 
     subprocess.call(["./text2speech.sh", 
         "hi, %s" % (user)])
@@ -141,7 +146,7 @@ while (True):
         "name" == request[1] and
         "is" == request[2]):
         user = request[3]
-        post_recognition(user, 'teddy.wav',
+        post_recognition(user, 'dude.wav',
 		options.device, options.host, options.port)
         if (options.camera):
             takPhoto(user)
