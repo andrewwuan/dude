@@ -62,13 +62,6 @@ while (True):
     # Check for the keyword teddy
     while ("teddy" not in keyword and
 	   "Teddy" not in keyword):
-        # Check for incoming message
-        if (user != ''):
-            packet = check_message(user, options.host, options.port)
-            for p in packet:
-                message = "%s, you have a message from %s." % (user, p['user'])
-                subprocess.call(["./text2speech.sh", message])
-                subprocess.call(["./text2speech.sh", p['message']])
 
         # Post temperature & brightness data
         set_temperature(options.device, readTemperature(), options.host, options.port)
@@ -86,6 +79,14 @@ while (True):
         check_alarms("http://" + options.host + ":" + options.port, options.device)
         
     user = get_recognition('teddy.wav', options.device, options.host, options.port)
+
+    # Check for incoming message
+    if (user != ''):
+        packet = check_message(user, options.host, options.port)
+        for p in packet:
+            message = "%s, you have a message from %s." % (user, p['user'])
+            subprocess.call(["./text2speech.sh", message])
+            subprocess.call(["./text2speech.sh", p['message']])
 
     if (user == ""):
         subprocess.call(["./text2speech.sh", 

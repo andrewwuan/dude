@@ -16,7 +16,7 @@ def correlate(audio1, audio2):
     fs1, sig1 = wavfile.read(audio1)
     fs2, sig2 = wavfile.read(audio2)
    
-    shortWidth = 10
+    shortWidth = 2
     shortLen = len(sig1) / shortWidth
    
     sig1Short = array([sig1[shortWidth * i] for i in xrange(shortLen)])
@@ -38,6 +38,7 @@ def match(elem):
     name = elem['name']
     addr = elem['speech_file']
     global dictionary
+    global target
     dictionary[name] = correlate(target, addr)
     return
     # if the audio matches, return name of the user
@@ -53,9 +54,10 @@ def find(elem):
 
 def check_audio(audio, checklist):
     global target 
+    global dictionary
+    dictionary = {}
     target = audio
     map(match, checklist)
-    global dictionary
     print dictionary
     result = max(dictionary.iteritems(), key = operator.itemgetter(1))
     if (result[1]>0.65):
