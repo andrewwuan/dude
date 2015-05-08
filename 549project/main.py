@@ -23,6 +23,8 @@ def convert_brightness(brightness):
 
 user = ""
 
+message_checked = False
+
 parser = optparse.OptionParser()
 
 parser.add_option('-u', '--url',
@@ -80,10 +82,12 @@ while (True):
         
     user = get_recognition('dude.wav', options.device, options.host, options.port)
 
+    message_checked = False
     # Check for incoming message
     if (user != ''):
         packet = check_message(user, options.host, options.port)
         for p in packet:
+            message_checked = True
             message = "%s, you have a message from %s." % (user, p['user'])
             subprocess.call(["./text2speech.sh", message])
             subprocess.call(["./text2speech.sh", p['message']])
@@ -123,8 +127,9 @@ while (True):
         user = name
         continue
 
-    subprocess.call(["./text2speech.sh", 
-        "hi, %s" % (user)])
+    if (not message_checked):
+        subprocess.call(["./text2speech.sh", 
+            "hi, %s" % (user)])
 
     # Listen to user's question
     subprocess.call("./speech2text_long.sh")
